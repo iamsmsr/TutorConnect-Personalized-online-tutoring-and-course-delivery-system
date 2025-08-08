@@ -1,0 +1,36 @@
+/* Add form styles for signup and login pages */
+.form-container {
+  max-width: 400px;
+  margin: 3rem auto;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  text-align: center;
+}
+.form-container h2 {
+  margin-bottom: 1.5rem;
+}
+.form-container input {
+  width: 90%;
+  padding: 0.7rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+.form-container button {
+  width: 100%;
+  padding: 0.7rem;
+  background: #ff6600;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+.form-container a {
+  color: #003366;
+  text-decoration: underline;
+}

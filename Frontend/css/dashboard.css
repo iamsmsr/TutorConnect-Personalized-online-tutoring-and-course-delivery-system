@@ -1,0 +1,83 @@
+/* dashboard.css */
+body {
+  background: url('../images/page-bg.jpg') center/cover no-repeat;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.dashboard-container {
+  max-width: 1100px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  padding: 40px 36px;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.dashboard-header h2 {
+  color: #4a6fa5;
+  font-size: 2.2rem;
+  margin: 0;
+}
+
+.dashboard-header .logout-btn {
+  background: #4a6fa5;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 22px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.dashboard-header .logout-btn:hover {
+  background: #2d4e7c;
+}
+
+.dashboard-content {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.dashboard-card {
+  flex: 1 1 260px;
+  background: #f7f9fa;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 28px 22px;
+  margin-bottom: 24px;
+  text-align: center;
+  transition: box-shadow 0.2s;
+}
+.dashboard-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+.dashboard-card h3 {
+  color: #4a6fa5;
+  margin-bottom: 12px;
+}
+.dashboard-card button {
+  background: #4a6fa5;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 18px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.2s;
+}
+.dashboard-card button:hover {
+  background: #2d4e7c;
+}

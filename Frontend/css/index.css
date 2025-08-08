@@ -1,0 +1,136 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: url('../images/page-bg.jpg') center/cover no-repeat;
+}
+.navbar {
+  display: flex;
+  align-items: center;
+  background: #003366;
+  color: #fff;
+  padding: 1rem 2rem;
+}
+.logo {
+  font-size: 1.7rem;
+  font-weight: bold;
+  margin-right: 2rem;
+}
+.search-bar {
+  flex: 1;
+  padding: 0.5rem;
+  margin-right: 1rem;
+  border-radius: 4px;
+  border: none;
+}
+.navbar-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+.register-btn {
+  background: #ff6600;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: bold;
+}
+.login-btn {
+  background: #fff;
+  color: #003366;
+  border: 2px solid #003366;
+  padding: 0.5rem 1.2rem;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: bold;
+}
+.hero {
+  position: relative;
+  height: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #4a6fa5 url('https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1500&q=80') center/cover no-repeat;
+  background-size: cover;
+  background-position: center;
+  transition: background-image 1s ease-in-out;
+}
+.hero-overlay {
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  padding: 2rem 3rem;
+  border-radius: 12px;
+  text-align: center;
+}
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+.highlight {
+  color: #ff6600;
+  font-weight: bold;
+}
+.hero-search-group {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+.hero-search {
+  padding: 0.5rem;
+  width: 320px;
+  border-radius: 4px 0 0 4px;
+  border: none;
+}
+.search-btn {
+  padding: 0.5rem 1.2rem;
+  background: #ff6600;
+  color: #fff;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-weight: bold;
+}
+.partners {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  background: #fff;
+  padding: 2rem 0;
+}
+.partners img {
+  height: 40px;
+  filter: grayscale(80%);
+}
+.trending {
+  padding: 2rem;
+  background: #f0f4f8;
+}
+.trending h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+}
+.courses {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.course-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 1rem;
+  width: 220px;
+  text-align: center;
+  transition: box-shadow 0.2s;
+}
+.course-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+.course-card img {
+  width: 100%;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
