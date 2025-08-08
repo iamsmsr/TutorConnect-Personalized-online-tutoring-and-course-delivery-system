@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Dashboard - TutorConnect</title>
+  <link rel="stylesheet" href="../css/index.css">
+</head>
+<body>
+  <div class="login-container">
+    <h2>Welcome, Student!</h2>
+    <p>Your personalized dashboard for finding tutors and courses.</p>
+    <button onclick="window.location.href='courses.html'">Browse Courses</button>
+    <button onclick="window.location.href='profile.html'">View Profile</button>
+    <button onclick="logout()">Log Out</button>
+  </div>
+  <script>
+    function logout() {
+      localStorage.removeItem('token');
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+</html>
