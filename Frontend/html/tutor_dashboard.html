@@ -10,9 +10,17 @@
     <h2>Welcome, Tutor!</h2>
     <p>Manage your courses, students, and profile here.</p>
     <button onclick="window.location.href='my_courses.html'">My Courses</button>
+<<<<<<< HEAD
     <button onclick="window.location.href='profile.html'">View Profile</button>
     <button onclick="logout()">Log Out</button>
   </div>
+=======
+    <button onclick="showEditProfileForm()">Edit Profile</button>
+    <button onclick="logout()">Log Out</button>
+    <div id="profileEditContainer" style="margin-top:30px;"></div>
+  </div>
+  <script src="../js/tutor_dashboard.js"></script>
+>>>>>>> df9bbf5 (pusing profile customization)
   <script>
     function logout() {
       localStorage.removeItem('token');

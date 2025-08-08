@@ -1,6 +1,6 @@
 // Student Dashboard Profile Edit UI
 function showEditProfileForm() {
-  const token = localStorage.getItem('jwt');
+  const token = localStorage.getItem('token');
   if (!token) {
     alert('You are not logged in. Please log in first.');
     window.location.href = 'login.html';
