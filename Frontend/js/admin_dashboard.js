@@ -40,7 +40,7 @@ function showCourseManagement() {
 }
 
 async function fetchAndDisplayCourses(type, query) {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('jwt');
   let url = '';
   if(type === 'all') url = 'http://localhost:8080/api/admin/courses';
   else url = 'http://localhost:8080/api/admin/search-course?query=' + encodeURIComponent(query);
@@ -96,7 +96,7 @@ window.editCourse = function(id, encodedCourse) {
   document.getElementById('editCourseForm').onsubmit = async function(e) {
     e.preventDefault();
     const form = e.target;
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('jwt');
     const data = {
       title: form.title.value,
       description: form.description.value,
@@ -153,7 +153,7 @@ function showCreateCourseForm() {
   document.getElementById('createCourseForm').onsubmit = async function(e) {
     e.preventDefault();
     const form = e.target;
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('jwt');
     const data = {
       title: form.title.value,
       description: form.description.value,
@@ -226,7 +226,7 @@ function showTutorSearchAndList() {
 }
 
 async function fetchAndDisplayTutors(type, query) {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('jwt');
   let url = '';
   if(type === 'all') url = 'http://localhost:8080/api/admin/tutors';
   else url = 'http://localhost:8080/api/admin/search-tutor?query=' + encodeURIComponent(query);
@@ -276,7 +276,7 @@ window.editTutor = function(id, encodedTutor) {
   document.getElementById('editTutorForm').onsubmit = async function(e) {
     e.preventDefault();
     const form = e.target;
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('jwt');
     const data = {
       username: form.username.value,
       email: form.email.value,
@@ -347,7 +347,7 @@ function showCreateUserForm() {
   document.getElementById('createUserForm').onsubmit = async function(e) {
     e.preventDefault();
     const form = e.target;
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('jwt');
     const data = {
       username: form.username.value,
       email: form.email.value,
@@ -399,7 +399,7 @@ function showEditTutorForm() {
   document.getElementById('editTutorForm').onsubmit = async function(e) {
     e.preventDefault();
     const form = e.target;
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('jwt');
     const data = {
       username: form.username.value,
       email: form.email.value,

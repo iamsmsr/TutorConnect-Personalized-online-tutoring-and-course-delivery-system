@@ -17,7 +17,9 @@ public class UserService {
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public User registerUser(User user) {
-        user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
+        // Use password field if available, otherwise fall back to passwordHash
+        String rawPassword = user.getPassword() != null ? user.getPassword() : user.getPasswordHash();
+        user.setPasswordHash(passwordEncoder.encode(rawPassword));
         if (user.getBio() == null) user.setBio("");
         if (user.getSubjects() == null) user.setSubjects(new ArrayList<>());
         if (user.getLanguages() == null) user.setLanguages(new ArrayList<>());

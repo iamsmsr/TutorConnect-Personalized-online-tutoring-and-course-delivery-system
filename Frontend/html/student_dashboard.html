@@ -10,20 +10,15 @@
     <h2>Welcome, Student!</h2>
     <p>Your personalized dashboard for finding tutors and courses.</p>
     <button onclick="window.location.href='courses.html'">Browse Courses</button>
-<<<<<<< HEAD
-    <button onclick="window.location.href='profile.html'">View Profile</button>
-    <button onclick="logout()">Log Out</button>
-  </div>
-=======
     <button onclick="showEditProfileForm()">Edit Profile</button>
     <button onclick="logout()">Log Out</button>
     <div id="profileEditContainer" style="margin-top:30px;"></div>
   </div>
   <script src="../js/student_dashboard.js"></script>
->>>>>>> df9bbf5 (pusing profile customization)
+  <script src="../js/show_username.js"></script>
   <script>
     function logout() {
-      localStorage.removeItem('token');
+      localStorage.removeItem('jwt');
       window.location.href = 'login.html';
     }
   </script>

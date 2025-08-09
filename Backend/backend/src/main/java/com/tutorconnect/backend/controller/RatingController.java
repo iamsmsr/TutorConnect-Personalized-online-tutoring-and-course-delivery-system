@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/ratings")
-public class RatingController {
+public class    RatingController {
     private final RatingService ratingService;
 
     public RatingController(RatingService ratingService) {

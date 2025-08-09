@@ -2,6 +2,7 @@ package com.tutorconnect.backend.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.annotation.Transient;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +13,9 @@ public class User {
     private String username;
     private String email;
     private String passwordHash;
+    
+    @Transient
+    private String password;
     private String role = "STUDENT";
     private String bio;
     private List<String> subjects;
@@ -44,6 +48,15 @@ public class User {
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
     }
+    
+    public String getPassword() {
+        return password;
+    }
+    
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
     public String getRole() {
         return role;
     }

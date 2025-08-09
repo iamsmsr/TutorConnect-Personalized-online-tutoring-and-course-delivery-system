@@ -9,12 +9,9 @@
         <module name="backend" />
       </profile>
     </annotationProcessing>
-<<<<<<< HEAD
-=======
     <bytecodeTargetLevel>
       <module name="backend" target="17" />
     </bytecodeTargetLevel>
->>>>>>> df9bbf5 (pusing profile customization)
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">

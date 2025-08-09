@@ -16,7 +16,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
   .then(result => {
     if(result.token) {
       alert('Login successful!');
-      localStorage.setItem('token', result.token);
+      localStorage.setItem('jwt', result.token);
       // Redirect based on role
       if(result.role === 'STUDENT') {
         window.location.href = 'student_dashboard.html';
