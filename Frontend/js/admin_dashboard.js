@@ -320,6 +320,7 @@ if (adminFormsDiv) {
 }
 // admin_dashboard.js
 function logout() {
+  localStorage.removeItem('jwt');
   localStorage.removeItem('token');
   window.location.href = 'login.html';
 }
