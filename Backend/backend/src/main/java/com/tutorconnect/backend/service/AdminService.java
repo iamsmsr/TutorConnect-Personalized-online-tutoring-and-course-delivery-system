@@ -9,6 +9,9 @@ import java.util.Optional;
 
 @Service
 public class AdminService {
+    public void saveCourse(com.tutorconnect.backend.model.Course course) {
+        courseRepository.save(course);
+    }
     @Autowired
     private com.tutorconnect.backend.repository.CourseRepository courseRepository;
 

@@ -18,7 +18,7 @@ public class Course {
     private String duration;
     private int studentsEnrolled;
     private Instant createdAt = Instant.now();
-    private List<Object> extra;
+    private Object extra;
 
     // Getters and setters
     public String getId() { return id; }
@@ -41,6 +41,6 @@ public class Course {
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
     public void setStudentsEnrolled(int studentsEnrolled) { this.studentsEnrolled = studentsEnrolled; }
-    public List<Object> getExtra() { return extra; }
-    public void setExtra(List<Object> extra) { this.extra = extra; }
+    public Object getExtra() { return extra; }
+    public void setExtra(Object extra) { this.extra = extra; }
 }

@@ -9,9 +9,10 @@
   <div class="login-container">
     <h2>Welcome, Tutor!</h2>
     <p>Manage your courses, students, and profile here.</p>
-    <button onclick="window.location.href='my_courses.html'">My Courses</button>
+    <button onclick="showAssignedCourses()">Show My Assigned Courses</button>
     <button onclick="showEditProfileForm()">Edit Profile</button>
     <button onclick="logout()">Log Out</button>
+    <div id="assignedCoursesContainer" style="margin-top:30px;"></div>
     <div id="profileEditContainer" style="margin-top:30px;"></div>
   </div>
   <script src="../js/tutor_dashboard.js"></script>
