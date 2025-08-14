@@ -9,9 +9,13 @@
   <div class="login-container">
     <h2>Welcome, Student!</h2>
     <p>Your personalized dashboard for finding tutors and courses.</p>
-    <button onclick="window.location.href='courses.html'">Browse Courses</button>
+    <button id="browseCoursesBtn">Browse Courses</button>
     <button onclick="showEditProfileForm()">Edit Profile</button>
     <button onclick="logout()">Log Out</button>
+    <div id="browseCoursesSection" style="display:none; margin-top:20px;">
+      <input type="text" id="studentSearchBar" class="search-bar" placeholder="Search our courses..." style="width:100%;max-width:400px;">
+      <div id="studentSearchResults"></div>
+    </div>
     <div id="profileEditContainer" style="margin-top:30px;"></div>
   </div>
   <script src="../js/student_dashboard.js"></script>

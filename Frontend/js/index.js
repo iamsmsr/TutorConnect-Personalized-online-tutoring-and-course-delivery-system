@@ -9,6 +9,18 @@ function handleSearchInput(inputElem) {
     resultsDiv.innerHTML = '';
     return;
   }
+  const token = localStorage.getItem('jwt');
+  let studentEmail = null;
+  let isStudent = false;
+  // Decode JWT to get email and role (simple base64 decode, not secure, for demo)
+  if (token) {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      studentEmail = payload.sub || payload.email;
+      const role = payload.role || payload.authorities;
+      isStudent = role === 'STUDENT' || (Array.isArray(role) && role.includes('STUDENT'));
+    } catch {}
+  }
   fetch(`http://localhost:8080/api/courses/search?query=${encodeURIComponent(query)}`)
     .then(res => {
       if (!res.ok) {
@@ -22,17 +34,66 @@ function handleSearchInput(inputElem) {
         resultsDiv.innerHTML = '<p>No courses found.';
         return;
       }
-      resultsDiv.innerHTML = courses.map(course => `
-        <div class="course-card" data-id="${course.id}" style="cursor:pointer;">
-          <h4>${course.title}</h4>
-          <p>${course.description}</p>
-          <p><strong>Language:</strong> ${course.language}</p>
-          <p><strong>Price:</strong> $${course.price}</p>
-        </div>
-      `).join('');
+      resultsDiv.innerHTML = courses.map(course => {
+        // Check if student is enrolled
+        let enrolled = false;
+        if (course.extra && course.extra.students && Array.isArray(course.extra.students) && studentEmail) {
+          enrolled = course.extra.students.some(s => s.email === studentEmail);
+        }
+        return `
+          <div class="course-card" data-id="${course.id}" style="cursor:pointer;">
+            <h4>${course.title}</h4>
+            <p>${course.description}</p>
+            <p><strong>Language:</strong> ${course.language}</p>
+            <p><strong>Price:</strong> $${course.price}</p>
+            <button class="enroll-btn" data-id="${course.id}" ${enrolled ? 'disabled' : ''}>${enrolled ? 'Enrolled' : 'Enroll'}</button>
+          </div>
+        `;
+      }).join('');
+      // Add enroll click event
+      document.querySelectorAll('.enroll-btn').forEach(btn => {
+        let loginPrompted = false;
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const courseId = btn.getAttribute('data-id');
+          if (!isStudent || !token) {
+            if (!loginPrompted) {
+              btn.textContent = 'Login to enroll in course';
+              loginPrompted = true;
+              return;
+            } else {
+              window.location.href = 'login.html';
+              return;
+            }
+          }
+          btn.disabled = true;
+          btn.textContent = 'Enrolling...';
+          fetch(`http://localhost:8080/api/courses/${courseId}/enroll`, {
+            method: 'POST',
+            headers: {
+              'Authorization': 'Bearer ' + token
+            }
+          })
+            .then(res => res.json())
+            .then(result => {
+              if (result.success) {
+                btn.textContent = 'Enrolled';
+              } else {
+                btn.textContent = result.message || 'Error';
+                btn.disabled = false;
+              }
+            })
+            .catch(() => {
+              btn.textContent = 'Error';
+              btn.disabled = false;
+            });
+        });
+      });
       // Add click event to each course card
       document.querySelectorAll('.course-card[data-id]').forEach(card => {
-        card.addEventListener('click', function() {
+        card.addEventListener('click', function(e) {
+          // Prevent click if enroll button was clicked
+          if (e.target.classList.contains('enroll-btn')) return;
           const courseId = card.getAttribute('data-id');
           window.location.href = `course_details.html?id=${courseId}`;
         });

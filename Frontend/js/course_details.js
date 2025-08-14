@@ -8,6 +8,22 @@ const courseId = getQueryParam('id');
 const courseDetailsDiv = document.getElementById('courseDetails');
 
 function renderCourseDetails(course) {
+  // Get student info from JWT
+  const token = localStorage.getItem('jwt');
+  let studentEmail = null;
+  let isStudent = false;
+  let enrolled = false;
+  if (token) {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      studentEmail = payload.sub || payload.email;
+      const role = payload.role || payload.authorities;
+      isStudent = role === 'STUDENT' || (Array.isArray(role) && role.includes('STUDENT'));
+    } catch {}
+  }
+  if (course.extra && course.extra.students && Array.isArray(course.extra.students) && studentEmail) {
+    enrolled = course.extra.students.some(s => s.email === studentEmail);
+  }
   courseDetailsDiv.innerHTML = `
     <div class="course-card">
       <h2>${course.title}</h2>
@@ -16,7 +32,7 @@ function renderCourseDetails(course) {
       <p><strong>Price:</strong> $${course.price}</p>
       <p><strong>Subjects:</strong> ${course.subjects ? course.subjects.join(', ') : ''}</p>
       <p><strong>Tutor:</strong> ${course.tutorName || course.tutorId}</p>
-      <button id="enrollBtn" class="enroll-btn">Enroll</button>
+      <button id="enrollBtn" class="enroll-btn" ${enrolled ? 'disabled' : ''}>${enrolled ? 'Enrolled' : 'Enroll'}</button>
     </div>
     <div id="averageRating" style="margin-top:16px;"></div>
     <div id="ratingsList" style="margin-top:16px;"></div>
@@ -42,9 +58,48 @@ function renderCourseDetails(course) {
       <div id="ratingError" style="color:red;"></div>
     </div>
   `;
-  document.getElementById('enrollBtn').addEventListener('click', function() {
-    alert('Enrollment feature coming soon!');
-  });
+  const enrollBtn = document.getElementById('enrollBtn');
+  if (enrolled) {
+    enrollBtn.disabled = true;
+    enrollBtn.textContent = 'Enrolled';
+  } else {
+    enrollBtn.disabled = false;
+    enrollBtn.textContent = 'Enroll';
+    let loginPrompted = false;
+    enrollBtn.onclick = function() {
+      if (!isStudent || !token) {
+        if (!loginPrompted) {
+          enrollBtn.textContent = 'Login to enroll in course';
+          loginPrompted = true;
+          return;
+        } else {
+          window.location.href = 'login.html';
+          return;
+        }
+      }
+      enrollBtn.disabled = true;
+      enrollBtn.textContent = 'Enrolling...';
+      fetch(`http://localhost:8080/api/courses/${courseId}/enroll`, {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
+      })
+        .then(res => res.json())
+        .then(result => {
+          if (result.success) {
+            enrollBtn.textContent = 'Enrolled';
+          } else {
+            enrollBtn.textContent = result.message || 'Error';
+            enrollBtn.disabled = false;
+          }
+        })
+        .catch(() => {
+          enrollBtn.textContent = 'Error';
+          enrollBtn.disabled = false;
+        });
+    };
+  }
   fetchAverageRating();
   fetchRatingsList();
   setupRatingForm();

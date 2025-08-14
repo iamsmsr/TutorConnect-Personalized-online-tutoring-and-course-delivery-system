@@ -7,6 +7,12 @@ import java.util.List;
 
 @Service
 public class CourseService {
+    public List<Course> getAllCourses() {
+        return courseRepository.findAll();
+    }
+    public void saveCourse(Course course) {
+        courseRepository.save(course);
+    }
     private final CourseRepository courseRepository;
 
     public CourseService(CourseRepository courseRepository) {
