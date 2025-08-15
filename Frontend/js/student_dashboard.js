@@ -30,12 +30,22 @@ document.addEventListener('DOMContentLoaded', function() {
         listDiv.innerHTML = courses.map(course => {
           // Find student progress for this course
           let progress = 0, progressPercent = 0;
+          let assignmentsDone = [];
+          let assignmentCount = 0, completedAssignments = 0, assignmentPercent = 0;
           if (course.extra && course.extra.students && Array.isArray(course.extra.students) && studentEmail) {
             const studentObj = course.extra.students.find(s => s.email === studentEmail);
             if (studentObj) {
               progress = studentObj.progress || 0;
               progressPercent = studentObj.progressPercent || 0;
+              if (Array.isArray(studentObj.assignmentsDone)) {
+                assignmentsDone = studentObj.assignmentsDone;
+              }
             }
+          }
+          if (course.extra && course.extra.assignments && Array.isArray(course.extra.assignments)) {
+            assignmentCount = course.extra.assignments.length;
+            completedAssignments = course.extra.assignments.filter(([title]) => assignmentsDone.includes(title)).length;
+            assignmentPercent = assignmentCount > 0 ? Math.round((completedAssignments / assignmentCount) * 100) : 0;
           }
           let videosHtml = '';
           if (course.extra && course.extra.video && Array.isArray(course.extra.video)) {
@@ -51,16 +61,38 @@ document.addEventListener('DOMContentLoaded', function() {
           if (course.extra && course.extra.docs && Array.isArray(course.extra.docs)) {
             docsHtml = '<b>Documents:</b><ul>' + course.extra.docs.map(([title, link]) => `<li>${title}: <a href="${link}" target="_blank">${link}</a></li>`).join('') + '</ul>';
           }
+          let assignmentsHtml = '';
+          if (course.extra && course.extra.assignments && Array.isArray(course.extra.assignments)) {
+            // Find student assignment completion
+            let assignmentsDone = [];
+            if (course.extra.students && Array.isArray(course.extra.students) && studentEmail) {
+              const studentObj = course.extra.students.find(s => s.email === studentEmail);
+              if (studentObj && Array.isArray(studentObj.assignmentsDone)) {
+                assignmentsDone = studentObj.assignmentsDone;
+              }
+            }
+            let completedCount = 0;
+            assignmentsHtml = '<b>Assignments:</b><ul>' + course.extra.assignments.map(([title, link]) => {
+              const isDone = assignmentsDone.includes(title);
+              if (isDone) completedCount++;
+              return `<li>${title}: <a href="${link}" target="_blank">${link}</a> <span style="color:${isDone ? '#4caf50' : '#888'};font-weight:bold;">${isDone ? '✓ Done' : 'Not done'}</span></li>`;
+            }).join('') + '</ul>';
+            // Assignment progress bar
+            if (course.extra.assignments.length > 0) {
+              const percent = Math.round((completedCount / course.extra.assignments.length) * 100);
+              assignmentsHtml += `<div style="margin:10px 0;"><label>Assignment Progress:</label>
+                <div style="background:#eee;width:100%;height:16px;border-radius:8px;overflow:hidden;">
+                  <div style="background:#2196f3;width:${percent}%;height:100%;transition:width 0.5s;"></div>
+                </div>
+                <span>${percent}% (${completedCount} of ${course.extra.assignments.length} assignments done)</span>
+              </div>`;
+            }
+          }
           let quizzesHtml = '';
-          if (course.extra && course.extra.quizzes && Array.isArray(course.extra.quizzes)) {
-            quizzesHtml = '<b>Quizzes:</b><ul>' + course.extra.quizzes.map(quiz => `
-              <li>
-                <b>Q:</b> ${quiz.question}<br>
-                <b>Options:</b> ${quiz.options ? quiz.options.join(', ') : ''}<br>
-                <b>Answer:</b> ${quiz.answer}<br>
-                <span style="color:orange;">Writing answers coming soon</span>
-              </li>
-            `).join('') + '</ul>';
+          let practiceBtn = '';
+          if (course.extra && course.extra.quizzes && Array.isArray(course.extra.quizzes) && course.extra.quizzes.length > 0) {
+            quizzesHtml = '';
+            practiceBtn = `<button class="practice-quiz-btn" data-id="${course.id}" style="margin-top:10px;">Practice Quiz</button>`;
           }
           // Progress meter
           let progressBar = `<div style="margin:10px 0;">
@@ -72,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
           </div>`;
           // Certificate button
           let certBtn = '';
-          if (progressPercent === 100) {
+          if (progressPercent === 100 && assignmentPercent === 100) {
             certBtn = `<button class="cert-btn" data-id="${course.id}" style="margin-top:10px;">Get Certificate</button>`;
           }
           return `
@@ -84,7 +116,9 @@ document.addEventListener('DOMContentLoaded', function() {
               ${progressBar}
               ${videosHtml}
               ${docsHtml}
+              ${assignmentsHtml}
               ${quizzesHtml}
+              ${practiceBtn}
               ${certBtn}
               <button onclick="window.location.href='course_details.html?id=${course.id}'">View Details</button>
             </div>
@@ -92,6 +126,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }).join('');
         // Certificate button click handler
         setTimeout(() => {
+        // Practice Quiz button click handler
+        document.querySelectorAll('.practice-quiz-btn').forEach(btn => {
+          btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const courseId = btn.getAttribute('data-id');
+            const course = courses.find(c => c.id === courseId);
+            if (!course || !course.extra || !Array.isArray(course.extra.quizzes) || course.extra.quizzes.length === 0) {
+              alert('No quiz questions available for this course.');
+              return;
+            }
+            // Save quiz questions to localStorage for quiz.html
+            localStorage.setItem('practiceQuizData', JSON.stringify({
+              courseId: courseId,
+              questions: course.extra.quizzes
+            }));
+            window.location.href = 'quiz.html';
+          });
+        });
           document.querySelectorAll('.cert-btn').forEach(btn => {
             btn.addEventListener('click', function(e) {
               e.stopPropagation();

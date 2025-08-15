@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Practice Quiz</title>
+  <link rel="stylesheet" href="../css/quiz.css">
+</head>
+<body>
+  <div class="quiz-container">
+    <h2>Practice Quiz</h2>
+    <div id="quizSettings" class="settings-modal">
+      <label for="numQuestions">Number of Questions:</label>
+      <input type="number" id="numQuestions" min="1" value="3">
+      <br>
+      <label for="timeLimit">Time Limit (minutes):</label>
+      <input type="number" id="timeLimit" min="1" value="10">
+      <br>
+      <button id="startQuizBtn">Start Quiz</button>
+      <div id="settingsError" style="color:red;margin-top:10px;"></div>
+    </div>
+    <div id="quizArea" style="display:none;"></div>
+    <div id="resultArea" style="display:none;"></div>
+  </div>
+  <script src="../js/quiz.js"></script>
+</body>
+</html>

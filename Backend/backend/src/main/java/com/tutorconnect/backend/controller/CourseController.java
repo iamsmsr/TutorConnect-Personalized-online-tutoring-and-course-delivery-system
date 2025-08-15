@@ -25,6 +25,54 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/courses")
 public class CourseController {
+    @PreAuthorize("hasRole('TUTOR')")
+    @PutMapping("/{courseId}/students/{studentEmail}/assignments")
+    public ResponseEntity<?> markAssignmentDone(@PathVariable String courseId, @PathVariable String studentEmail, @RequestBody Map<String, String> body) {
+        String assignmentTitle = body.get("assignmentTitle");
+        if (assignmentTitle == null || assignmentTitle.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Missing assignment title"));
+        }
+        Course course = courseService.getCourseById(courseId);
+        if (course == null) {
+            return ResponseEntity.status(404).body(Map.of("success", false, "message", "Course not found"));
+        }
+        Map<String, Object> extra = course.getExtra() instanceof Map ? (Map<String, Object>) course.getExtra() : new java.util.HashMap<>();
+        ArrayList<Map<String, Object>> students = (ArrayList<Map<String, Object>>) extra.getOrDefault("students", new ArrayList<>());
+        ArrayList<Object> assignmentsArr = (ArrayList<Object>) extra.getOrDefault("assignments", new ArrayList<>());
+        int totalAssignments = assignmentsArr.size();
+        Map<String, Object> studentObj = null;
+        int studentIdx = -1;
+        for (int i = 0; i < students.size(); i++) {
+            Map<String, Object> s = students.get(i);
+            if (studentEmail.equalsIgnoreCase((String)s.get("email"))) {
+                studentObj = s;
+                studentIdx = i;
+                break;
+            }
+        }
+        if (studentObj == null) {
+            studentObj = new java.util.HashMap<>();
+            studentObj.put("email", studentEmail);
+        }
+        ArrayList<String> assignmentsDone = studentObj.get("assignmentsDone") instanceof ArrayList ? (ArrayList<String>) studentObj.get("assignmentsDone") : new ArrayList<>();
+        if (!assignmentsDone.contains(assignmentTitle)) {
+            assignmentsDone.add(assignmentTitle);
+        }
+        int doneCount = assignmentsDone.size();
+        int progressPercent = totalAssignments > 0 ? (int) ((doneCount * 100.0) / totalAssignments) : 0;
+        studentObj.put("assignmentsDone", assignmentsDone);
+        studentObj.put("assignmentProgress", doneCount);
+        studentObj.put("assignmentProgressPercent", progressPercent);
+        if (studentIdx >= 0) {
+            students.set(studentIdx, studentObj);
+        } else {
+            students.add(studentObj);
+        }
+        extra.put("students", students);
+        course.setExtra(extra);
+        courseService.saveCourse(course);
+        return ResponseEntity.ok(Map.of("success", true, "doneCount", doneCount, "progressPercent", progressPercent));
+    }
     @PreAuthorize("hasRole('STUDENT')")
     @PostMapping("/{id}/progress/video")
     public ResponseEntity<?> markVideoProgress(@PathVariable String id, @RequestBody Map<String, String> body) {

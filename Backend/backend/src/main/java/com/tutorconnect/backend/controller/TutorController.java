@@ -71,6 +71,11 @@ public class TutorController {
         }
         // Accept quizzes as part of resources: quizzes should be a List<Map<String, Object>>
         // Example quiz: { "question": "...", "options": ["A", "B", "C"], "answer": "A" }
+        // Merge resources into existing extra, preserving students
+        var extra = course.getExtra() instanceof java.util.Map ? (java.util.Map<String, Object>) course.getExtra() : new java.util.HashMap<>();
+        if (extra.containsKey("students")) {
+            resources.put("students", extra.get("students"));
+        }
         course.setExtra(resources);
         adminService.saveCourse(course);
         return ResponseEntity.ok(java.util.Map.of("success", true));
