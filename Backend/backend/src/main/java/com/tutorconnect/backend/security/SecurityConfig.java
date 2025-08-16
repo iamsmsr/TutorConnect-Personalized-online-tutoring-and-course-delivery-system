@@ -31,6 +31,9 @@ public class SecurityConfig {
                 .requestMatchers("/api/courses/*").permitAll()
                 .requestMatchers("/api/ratings/course/**").permitAll()
                 .requestMatchers("/api/ratings").hasRole("STUDENT")
+                .requestMatchers("/ws/**").permitAll()  // Allow WebSocket endpoints
+                .requestMatchers("/api/chat/**").authenticated()  // Allow chat endpoints for authenticated users
+                .requestMatchers("/api/groupchat/**").authenticated()  // Allow group chat endpoints
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
@@ -40,12 +43,18 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*"));
+        configuration.setAllowedOrigins(List.of(
+            "http://127.0.0.1:5500", 
+            "http://localhost:5500", 
+            "http://127.0.0.1:3000", 
+            "http://localhost:3000"
+        ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(false);
+        configuration.setAllowCredentials(true);  // Enable credentials
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/api/**", configuration);
+        source.registerCorsConfiguration("/ws/**", configuration);  // Add CORS for WebSocket
         return source;
     }
 

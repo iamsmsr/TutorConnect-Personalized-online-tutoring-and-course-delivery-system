@@ -11,6 +11,7 @@
     <p>Your personalized dashboard for finding tutors and courses.</p>
     <button id="browseCoursesBtn">Browse Courses</button>
     <button onclick="showEditProfileForm()">Edit Profile</button>
+    <button onclick="openChat()" style="background: #007bff; color: white; border: none; border-radius: 6px; padding: 10px 20px; font-size: 16px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">💬 Chat</button>
     <button onclick="logout()">Log Out</button>
     <div id="browseCoursesSection" style="display:none; margin-top:20px;">
       <input type="text" id="studentSearchBar" class="search-bar" placeholder="Search our courses..." style="width:100%;max-width:400px;">
@@ -24,6 +25,10 @@
     function logout() {
       localStorage.removeItem('jwt');
       window.location.href = 'login.html';
+    }
+    
+    function openChat() {
+      window.location.href = 'chat.html';
     }
   </script>
 </body>
