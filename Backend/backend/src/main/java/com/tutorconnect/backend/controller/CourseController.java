@@ -4,19 +4,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.http.ResponseEntity;
 import java.util.Map;
 import java.util.ArrayList;
+import java.time.Instant;
+import java.util.UUID;
 
-
-import com.tutorconnect.backend.model.Course;
-import com.tutorconnect.backend.service.CourseService;
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
-
-
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.http.ResponseEntity;
-import java.util.Map;
-import java.util.ArrayList;
 import com.tutorconnect.backend.model.Course;
 import com.tutorconnect.backend.service.CourseService;
 import org.springframework.web.bind.annotation.*;
@@ -196,5 +186,270 @@ public class CourseController {
     @GetMapping("/{id}")
     public Course getCourseById(@PathVariable String id) {
         return courseService.getCourseById(id);
+    }
+
+    // Session Request Endpoints
+    @PreAuthorize("hasRole('STUDENT')")
+    @PostMapping("/{courseId}/session-request")
+    public ResponseEntity<?> createSessionRequest(@PathVariable String courseId) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String studentEmail = principal instanceof String ? (String) principal : null;
+        if (studentEmail == null) {
+            return ResponseEntity.status(401).body(Map.of("success", false, "message", "Unauthorized"));
+        }
+
+        Course course = courseService.getCourseById(courseId);
+        if (course == null) {
+            return ResponseEntity.status(404).body(Map.of("success", false, "message", "Course not found"));
+        }
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> extra = course.getExtra() instanceof Map ? (Map<String, Object>) course.getExtra() : new java.util.HashMap<>();
+        @SuppressWarnings("unchecked")
+        ArrayList<Map<String, Object>> students = (ArrayList<Map<String, Object>>) extra.getOrDefault("students", new ArrayList<>());
+
+        // Find student
+        Map<String, Object> studentObj = null;
+        int studentIdx = -1;
+        for (int i = 0; i < students.size(); i++) {
+            Map<String, Object> s = students.get(i);
+            if (studentEmail.equalsIgnoreCase((String)s.get("email"))) {
+                studentObj = s;
+                studentIdx = i;
+                break;
+            }
+        }
+
+        if (studentObj == null) {
+            return ResponseEntity.status(403).body(Map.of("success", false, "message", "Not enrolled in this course"));
+        }
+
+        @SuppressWarnings("unchecked")
+        ArrayList<Map<String, Object>> requests = studentObj.get("requests") instanceof ArrayList ? 
+            (ArrayList<Map<String, Object>>) studentObj.get("requests") : new ArrayList<>();
+
+        // Check if student has reached 5 request limit (total requests, not just pending)
+        if (requests.size() >= 5) {
+            return ResponseEntity.status(400).body(Map.of("success", false, "message", "Maximum 5 requests allowed per course"));
+        }
+
+        // Create new request
+        Map<String, Object> request = new java.util.HashMap<>();
+        request.put("id", UUID.randomUUID().toString());
+        request.put("status", "pending");
+        request.put("requestedAt", Instant.now().toString());
+        request.put("studentEmail", studentEmail);
+
+        requests.add(request);
+        studentObj.put("requests", requests);
+        students.set(studentIdx, studentObj);
+        extra.put("students", students);
+        course.setExtra(extra);
+        courseService.saveCourse(course);
+
+        return ResponseEntity.ok(Map.of("success", true, "requestId", request.get("id")));
+    }
+
+    // Extra Session Request Endpoint
+    @PreAuthorize("hasRole('STUDENT')")
+    @PostMapping("/{courseId}/extra-session-request")
+    public ResponseEntity<?> createExtraSessionRequest(@PathVariable String courseId) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String studentEmail = principal instanceof String ? (String) principal : null;
+        if (studentEmail == null) {
+            return ResponseEntity.status(401).body(Map.of("success", false, "message", "Unauthorized"));
+        }
+
+        Course course = courseService.getCourseById(courseId);
+        if (course == null) {
+            return ResponseEntity.status(404).body(Map.of("success", false, "message", "Course not found"));
+        }
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> extra = course.getExtra() instanceof Map ? (Map<String, Object>) course.getExtra() : new java.util.HashMap<>();
+        @SuppressWarnings("unchecked")
+        ArrayList<Map<String, Object>> students = (ArrayList<Map<String, Object>>) extra.getOrDefault("students", new ArrayList<>());
+
+        // Find student
+        Map<String, Object> studentObj = null;
+        int studentIdx = -1;
+        for (int i = 0; i < students.size(); i++) {
+            Map<String, Object> s = students.get(i);
+            if (studentEmail.equalsIgnoreCase((String)s.get("email"))) {
+                studentObj = s;
+                studentIdx = i;
+                break;
+            }
+        }
+
+        if (studentObj == null) {
+            return ResponseEntity.status(403).body(Map.of("success", false, "message", "Not enrolled in this course"));
+        }
+
+        @SuppressWarnings("unchecked")
+        ArrayList<Map<String, Object>> requests = studentObj.get("requests") instanceof ArrayList ? 
+            (ArrayList<Map<String, Object>>) studentObj.get("requests") : new ArrayList<>();
+
+        // Create new extra request
+        Map<String, Object> request = new java.util.HashMap<>();
+        request.put("id", UUID.randomUUID().toString());
+        request.put("status", "pending");
+        request.put("requestedAt", Instant.now().toString());
+        request.put("studentEmail", studentEmail);
+        request.put("isExtra", true); // Mark as extra request
+
+        requests.add(request);
+        studentObj.put("requests", requests);
+        students.set(studentIdx, studentObj);
+        extra.put("students", students);
+        course.setExtra(extra);
+        courseService.saveCourse(course);
+
+        return ResponseEntity.ok(Map.of("success", true, "requestId", request.get("id"), "isExtra", true));
+    }
+
+    @PreAuthorize("hasRole('TUTOR')")
+    @PutMapping("/{courseId}/session-request/{requestId}/respond")
+    public ResponseEntity<?> respondToSessionRequest(@PathVariable String courseId, @PathVariable String requestId, @RequestBody Map<String, Object> body) {
+        Course course = courseService.getCourseById(courseId);
+        if (course == null) {
+            return ResponseEntity.status(404).body(Map.of("success", false, "message", "Course not found"));
+        }
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> extra = course.getExtra() instanceof Map ? (Map<String, Object>) course.getExtra() : new java.util.HashMap<>();
+        @SuppressWarnings("unchecked")
+        ArrayList<Map<String, Object>> students = (ArrayList<Map<String, Object>>) extra.getOrDefault("students", new ArrayList<>());
+
+        // Find the request
+        boolean requestFound = false;
+        for (Map<String, Object> student : students) {
+            @SuppressWarnings("unchecked")
+            ArrayList<Map<String, Object>> requests = student.get("requests") instanceof ArrayList ? 
+                (ArrayList<Map<String, Object>>) student.get("requests") : new ArrayList<>();
+            
+            for (Map<String, Object> request : requests) {
+                if (requestId.equals(request.get("id")) && "pending".equals(request.get("status"))) {
+                    String status = (String) body.get("status");
+                    String comment = (String) body.get("comment");
+                    request.put("status", status);
+                    request.put("responseAt", Instant.now().toString());
+                    
+                    if (comment != null && !comment.trim().isEmpty()) {
+                        request.put("comment", comment.trim());
+                    }
+                    
+                    if ("accepted".equals(status)) {
+                        String jitsiLink = (String) body.get("jitsiLink");
+                        String scheduledTime = (String) body.get("scheduledTime");
+                        if (jitsiLink != null) request.put("jitsiLink", jitsiLink);
+                        if (scheduledTime != null) request.put("scheduledTime", scheduledTime);
+                    }
+                    
+                    requestFound = true;
+                    break;
+                }
+            }
+            if (requestFound) break;
+        }
+
+        if (!requestFound) {
+            return ResponseEntity.status(404).body(Map.of("success", false, "message", "Request not found or already processed"));
+        }
+
+        course.setExtra(extra);
+        courseService.saveCourse(course);
+        return ResponseEntity.ok(Map.of("success", true));
+    }
+
+    @PreAuthorize("hasRole('STUDENT')")
+    @GetMapping("/{courseId}/student-requests")
+    public ResponseEntity<?> getStudentRequests(@PathVariable String courseId) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String studentEmail = principal instanceof String ? (String) principal : null;
+        if (studentEmail == null) {
+            return ResponseEntity.status(401).body(Map.of("success", false, "message", "Unauthorized"));
+        }
+
+        Course course = courseService.getCourseById(courseId);
+        if (course == null) {
+            return ResponseEntity.status(404).body(Map.of("success", false, "message", "Course not found"));
+        }
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> extra = course.getExtra() instanceof Map ? (Map<String, Object>) course.getExtra() : new java.util.HashMap<>();
+        @SuppressWarnings("unchecked")
+        ArrayList<Map<String, Object>> students = (ArrayList<Map<String, Object>>) extra.getOrDefault("students", new ArrayList<>());
+
+        // Find student and their requests
+        for (Map<String, Object> student : students) {
+            if (studentEmail.equalsIgnoreCase((String)student.get("email"))) {
+                @SuppressWarnings("unchecked")
+                ArrayList<Map<String, Object>> requests = student.get("requests") instanceof ArrayList ? 
+                    (ArrayList<Map<String, Object>>) student.get("requests") : new ArrayList<>();
+
+                // Update expired sessions to "done"
+                for (Map<String, Object> request : requests) {
+                    if ("accepted".equals(request.get("status")) && request.get("scheduledTime") != null) {
+                        try {
+                            Instant scheduledTime = Instant.parse((String) request.get("scheduledTime"));
+                            if (Instant.now().isAfter(scheduledTime)) {
+                                request.put("status", "done");
+                            }
+                        } catch (Exception e) {
+                            // Ignore parse errors
+                        }
+                    }
+                }
+
+                course.setExtra(extra);
+                courseService.saveCourse(course);
+                return ResponseEntity.ok(Map.of("success", true, "requests", requests));
+            }
+        }
+
+        return ResponseEntity.ok(Map.of("success", true, "requests", new ArrayList<>()));
+    }
+
+    @PreAuthorize("hasRole('TUTOR')")
+    @GetMapping("/{courseId}/tutor-requests")
+    public ResponseEntity<?> getCourseRequests(@PathVariable String courseId) {
+        Course course = courseService.getCourseById(courseId);
+        if (course == null) {
+            return ResponseEntity.status(404).body(Map.of("success", false, "message", "Course not found"));
+        }
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> extra = course.getExtra() instanceof Map ? (Map<String, Object>) course.getExtra() : new java.util.HashMap<>();
+        @SuppressWarnings("unchecked")
+        ArrayList<Map<String, Object>> students = (ArrayList<Map<String, Object>>) extra.getOrDefault("students", new ArrayList<>());
+
+        ArrayList<Map<String, Object>> allRequests = new ArrayList<>();
+        
+        // Collect all requests from all students
+        for (Map<String, Object> student : students) {
+            @SuppressWarnings("unchecked")
+            ArrayList<Map<String, Object>> requests = student.get("requests") instanceof ArrayList ? 
+                (ArrayList<Map<String, Object>>) student.get("requests") : new ArrayList<>();
+            
+            // Update expired sessions to "done"
+            for (Map<String, Object> request : requests) {
+                if ("accepted".equals(request.get("status")) && request.get("scheduledTime") != null) {
+                    try {
+                        Instant scheduledTime = Instant.parse((String) request.get("scheduledTime"));
+                        if (Instant.now().isAfter(scheduledTime)) {
+                            request.put("status", "done");
+                        }
+                    } catch (Exception e) {
+                        // Ignore parse errors
+                    }
+                }
+                allRequests.add(request);
+            }
+        }
+
+        course.setExtra(extra);
+        courseService.saveCourse(course);
+        return ResponseEntity.ok(Map.of("success", true, "requests", allRequests));
     }
 }

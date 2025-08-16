@@ -107,6 +107,40 @@ document.addEventListener('DOMContentLoaded', function() {
           if (progressPercent === 100 && assignmentPercent === 100) {
             certBtn = `<button class="cert-btn" data-id="${course.id}" style="margin-top:10px;">Get Certificate</button>`;
           }
+          
+          // Session Requests UI
+          let sessionRequestsHtml = '';
+          let totalRequests = 0;
+          let requests = [];
+          if (course.extra && course.extra.students && Array.isArray(course.extra.students) && studentEmail) {
+            const studentObj = course.extra.students.find(s => s.email === studentEmail);
+            if (studentObj && Array.isArray(studentObj.requests)) {
+              requests = studentObj.requests;
+              totalRequests = requests.length; // Count all requests, not just active ones
+            }
+          }
+          sessionRequestsHtml += `<div style="margin:10px 0;">
+            <b>Session Requests:</b>
+            <div style="margin-bottom:10px;">
+              <button class="requestSessionBtn" data-id="${course.id}" ${totalRequests >= 5 ? 'disabled' : ''} style="margin-bottom:5px; background: ${totalRequests >= 5 ? '#ccc' : '#2196f3'}; color: white; padding: 8px 15px; border: none; border-radius: 3px; cursor: ${totalRequests >= 5 ? 'not-allowed' : 'pointer'};">Request Session (${totalRequests}/5)</button>
+              ${totalRequests >= 5 ? `<button class="extraRequestBtn" data-id="${course.id}" style="margin-left:10px; background: #ff9800; color: white; padding: 8px 15px; border: none; border-radius: 3px; cursor: pointer;">Extra Request</button>` : ''}
+            </div>
+            <div style="margin-top:10px;">
+              ${requests.length === 0 ? '<p><i>No session requests yet.</i></p>' : requests.map((r, index) => `
+                <div style="border: 1px solid #ddd; padding: 10px; margin: 5px 0; border-radius: 5px; background: ${r.status === 'accepted' ? '#f0fff0' : r.status === 'rejected' ? '#fff0f0' : r.status === 'done' ? '#f0f8ff' : '#fffef0'}; ${r.isExtra ? 'border-left: 4px solid #ff9800;' : ''}">
+                  <b>${r.isExtra ? '🔶 EXTRA ' : ''}Request ${index + 1}:</b>
+                  ${r.isExtra ? '<br><span style="color: #ff9800; font-weight: bold; font-size: 12px;">⚠️ Extra request beyond 5-request limit</span>' : ''}
+                  <br><b>Status:</b> <span style="color: ${r.status === 'accepted' ? 'green' : r.status === 'rejected' ? 'red' : r.status === 'done' ? 'blue' : 'orange'}; font-weight: bold;">${r.status.toUpperCase()}</span>
+                  ${r.status === 'accepted' ? `<br><b>Jitsi Link:</b> <a href='${r.jitsiLink}' target='_blank' style='color: #2196f3;'>${r.jitsiLink}</a>` : ''}
+                  ${r.scheduledTime ? `<br><b>Scheduled Time:</b> <span style='color: #333; font-weight: bold;'>${new Date(r.scheduledTime).toLocaleString()}</span>` : ''}
+                  ${r.comment ? `<br><b>Tutor Message:</b> <span style='color:#2196f3; font-style: italic;'>"${r.comment}"</span>` : ''}
+                  ${r.status === 'done' ? `<br><span style='color:green;font-weight:bold;'>✓ Session Completed</span>` : ''}
+                  ${r.requestedAt ? `<br><small style='color: #666;'>Requested: ${new Date(r.requestedAt).toLocaleString()}</small>` : ''}
+                </div>
+              `).join('')}
+            </div>
+          </div>`;
+          
           return `
             <div class="course-card" data-id="${course.id}" style="cursor:pointer;">
               <h4>${course.title}</h4>
@@ -120,12 +154,78 @@ document.addEventListener('DOMContentLoaded', function() {
               ${quizzesHtml}
               ${practiceBtn}
               ${certBtn}
+              ${sessionRequestsHtml}
               <button onclick="window.location.href='course_details.html?id=${course.id}'">View Details</button>
             </div>
           `;
         }).join('');
-        // Certificate button click handler
+        
+        // Setup event handlers after DOM is updated
         setTimeout(() => {
+        // Session Request button click handler
+        document.querySelectorAll('.requestSessionBtn').forEach(btn => {
+          btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const courseId = btn.getAttribute('data-id');
+            btn.disabled = true;
+            btn.textContent = 'Requesting...';
+            fetch(`http://localhost:8080/api/courses/${courseId}/session-request`, {
+              method: 'POST',
+              headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+              }
+            })
+              .then(res => res.json())
+              .then(result => {
+                if (result.success) {
+                  btn.textContent = 'Requested';
+                } else {
+                  btn.textContent = result.message || 'Error';
+                  btn.disabled = false;
+                }
+                // Optionally refresh UI
+                setTimeout(() => window.location.reload(), 1200);
+              })
+              .catch((err) => {
+                btn.textContent = 'Error';
+                btn.disabled = false;
+                alert('Session request failed: ' + err);
+              });
+          });
+        });
+        
+        // Extra Request button click handler
+        document.querySelectorAll('.extraRequestBtn').forEach(btn => {
+          btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const courseId = btn.getAttribute('data-id');
+            btn.disabled = true;
+            btn.textContent = 'Requesting...';
+            fetch(`http://localhost:8080/api/courses/${courseId}/extra-session-request`, {
+              method: 'POST',
+              headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+              }
+            })
+              .then(res => res.json())
+              .then(result => {
+                if (result.success) {
+                  btn.textContent = 'Extra Request Sent';
+                } else {
+                  btn.textContent = result.message || 'Error';
+                  btn.disabled = false;
+                }
+                // Optionally refresh UI
+                setTimeout(() => window.location.reload(), 1200);
+              })
+              .catch((err) => {
+                btn.textContent = 'Error';
+                btn.disabled = false;
+                alert('Extra session request failed: ' + err);
+              });
+          });
+        });
+        
         // Practice Quiz button click handler
         document.querySelectorAll('.practice-quiz-btn').forEach(btn => {
           btn.addEventListener('click', function(e) {
@@ -144,99 +244,106 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.href = 'quiz.html';
           });
         });
-          document.querySelectorAll('.cert-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-              e.stopPropagation();
-              const courseId = btn.getAttribute('data-id');
-              // Generate certificate PDF
-              const course = courses.find(c => c.id === courseId);
+        
+        // Certificate button click handler
+        document.querySelectorAll('.cert-btn').forEach(btn => {
+          btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const courseId = btn.getAttribute('data-id');
+            // Generate certificate PDF
+            const course = courses.find(c => c.id === courseId);
+            
+            // Fetch user profile to get actual username
+            fetch('http://localhost:8080/api/user/me', {
+              headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt') }
+            })
+            .then(res => res.json())
+            .then(user => {
+              const studentName = user.username || studentEmail || 'Student';
               
-              // Fetch user profile to get actual username
-              fetch('http://localhost:8080/api/user/me', {
-                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt') }
-              })
-              .then(res => res.json())
-              .then(user => {
-                const studentName = user.username || studentEmail || 'Student';
-                
-                // Open new window with certificate for printing as PDF
-                const certWindow = window.open('', '_blank');
-                certWindow.document.write(`
-                  <!DOCTYPE html>
-                  <html>
-                  <head>
-                    <title>Certificate - ${course.title}</title>
-                    <style>
-                      body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
-                      .certificate { 
-                        width: 800px; 
-                        height: 600px; 
-                        margin: 0 auto; 
-                        padding: 60px; 
-                        text-align: center; 
-                        border: 8px solid #4caf50; 
-                        background: #fff;
-                        box-sizing: border-box;
-                      }
-                      h1 { color: #388e3c; font-size: 42px; margin-bottom: 20px; }
-                      h2 { color: #222; font-size: 32px; margin: 20px 0; }
-                      h3 { color: #388e3c; font-size: 28px; margin: 20px 0; }
-                      p { font-size: 18px; margin: 12px 0; }
-                      hr { border: 2px solid #4caf50; margin: 30px 0; }
-                      .footer { margin-top: 40px; }
-                      .brand { font-size: 24px; color: #4caf50; font-weight: bold; }
-                      .small { font-size: 14px; color: #888; }
-                      @media print {
-                        body { margin: 0; }
-                        .certificate { page-break-inside: avoid; }
-                      }
-                    </style>
-                  </head>
-                  <body>
-                    <div class="certificate">
-                      <h1>Certificate of Completion</h1>
-                      <hr>
-                      <p>This is to certify that</p>
-                      <h2>${studentName}</h2>
-                      <p>has successfully completed the course</p>
-                      <h3>${course.title}</h3>
-                      <p>Course Description: ${course.description}</p>
-                      <p>Tutor: ${course.tutorId || 'N/A'}</p>
-                      <p>Duration: ${course.duration || 'N/A'}</p>
-                      <p>Language: ${course.language || 'N/A'}</p>
-                      <hr>
-                      <p>Date of Completion: <b>${new Date().toLocaleDateString()}</b></p>
-                      <div class="footer">
-                        <div class="brand">Tutor Connect</div>
-                        <div class="small">This certificate is auto-generated and not valid for all official purposes.</div>
-                      </div>
+              // Open new window with certificate for printing as PDF
+              const certWindow = window.open('', '_blank');
+              certWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                  <title>Certificate - ${course.title}</title>
+                  <style>
+                    body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+                    .certificate { 
+                      width: 800px; 
+                      height: 600px; 
+                      margin: 0 auto; 
+                      padding: 60px; 
+                      text-align: center; 
+                      border: 8px solid #4caf50; 
+                      background: #fff;
+                      box-sizing: border-box;
+                    }
+                    h1 { color: #388e3c; font-size: 42px; margin-bottom: 20px; }
+                    h2 { color: #222; font-size: 32px; margin: 20px 0; }
+                    h3 { color: #388e3c; font-size: 28px; margin: 20px 0; }
+                    p { font-size: 18px; margin: 12px 0; }
+                    hr { border: 2px solid #4caf50; margin: 30px 0; }
+                    .footer { margin-top: 40px; }
+                    .brand { font-size: 24px; color: #4caf50; font-weight: bold; }
+                    .small { font-size: 14px; color: #888; }
+                    @media print {
+                      body { margin: 0; }
+                      .certificate { page-break-inside: avoid; }
+                    }
+                  </style>
+                </head>
+                <body>
+                  <div class="certificate">
+                    <h1>Certificate of Completion</h1>
+                    <hr>
+                    <p>This is to certify that</p>
+                    <h2>${studentName}</h2>
+                    <p>has successfully completed the course</p>
+                    <h3>${course.title}</h3>
+                    <p>Course Description: ${course.description}</p>
+                    <p>Tutor: ${course.tutorId || 'N/A'}</p>
+                    <p>Duration: ${course.duration || 'N/A'}</p>
+                    <p>Language: ${course.language || 'N/A'}</p>
+                    <hr>
+                    <p>Date of Completion: <b>${new Date().toLocaleDateString()}</b></p>
+                    <div class="footer">
+                      <div class="brand">Tutor Connect</div>
+                      <div class="small">This certificate is auto-generated and not valid for all official purposes.</div>
                     </div>
-                    <script>
-                      window.onload = function() {
-                        setTimeout(function() {
-                          window.print();
-                        }, 500);
-                      };
-                    </script>
-                  </body>
-                  </html>
-                `);
-                certWindow.document.close();
-              })
-              .catch(err => {
-                console.error('Error fetching user profile:', err);
-                // Fallback to email if profile fetch fails
-                const studentName = studentEmail || 'Student';
-                // (same certificate generation code as above but with fallback name)
-              });
+                  </div>
+                  <script>
+                    window.onload = function() {
+                      setTimeout(function() {
+                        window.print();
+                      }, 500);
+                    };
+                  </script>
+                </body>
+                </html>
+              `);
+              certWindow.document.close();
+            })
+            .catch(err => {
+              console.error('Error fetching user profile:', err);
             });
           });
-        }, 500);
+        });
+        }, 100);
           // After rendering, load YouTube IFrame API if needed
-          if (courses.some(course => course.extra && course.extra.video && course.extra.video.some(([_, link]) => link.includes('youtube.com') || link.includes('youtu.be')))) {
+          // Note: Ad blocker errors from DoubleClick/Google Ads are harmless and expected
+          if (courses.some(course => {
+            return course.extra && course.extra.video && course.extra.video.some(videoArr => {
+              return videoArr[1] && (videoArr[1].includes('youtube.com') || videoArr[1].includes('youtu.be'));
+            });
+          })) {
             if (!window.YT) {
               let tag = document.createElement('script');
               tag.src = "https://www.youtube.com/iframe_api";
+              tag.onerror = function() {
+                console.warn('YouTube IFrame API failed to load. Videos may not work properly.');
+              };
               document.body.appendChild(tag);
             }
             window.onYouTubeIframeAPIReady = function() {
@@ -286,10 +393,10 @@ document.addEventListener('DOMContentLoaded', function() {
               });
             };
           }
-      })
-      .catch(() => {
-        document.getElementById('enrolledCoursesList').innerHTML = '<p>Error loading enrolled courses.</p>';
-      });
+        })
+        .catch(() => {
+          document.getElementById('enrolledCoursesList').innerHTML = '<p>Error loading enrolled courses.</p>';
+        });
   } else {
     document.getElementById('enrolledCoursesList').innerHTML = '<p>Please log in to see your enrolled courses.</p>';
   }

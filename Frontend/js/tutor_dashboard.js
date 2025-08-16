@@ -1,3 +1,9 @@
+      // Helper to generate Jitsi Meet link
+      function generateJitsiLink(courseId, studentEmail) {
+        const randomStr = Math.random().toString(36).substring(2, 8);
+        const roomName = `TC_${courseId}_${studentEmail.replace(/[^a-zA-Z0-9]/g,'')}_${randomStr}`;
+        return `https://meet.jit.si/${roomName}`;
+      }
 // Mark assignment as done for a student (called when tutor checks/unchecks box)
 function markAssignmentDone(checkbox) {
   const courseId = checkbox.getAttribute('data-course');
@@ -169,6 +175,7 @@ function showAssignedCourses() {
       } else {
         html += '<ul>';
         courses.forEach(course => {
+          // For each enrolled student, print Jitsi link in console
           html += `<li><strong>${course.title}</strong> - ${course.description}<br>`;
           // Show enrolled students and assignment marking UI
           if (course.extra && Array.isArray(course.extra.students) && course.extra.students.length > 0) {
@@ -195,6 +202,13 @@ function showAssignedCourses() {
           } else {
             html += '<i>No students enrolled yet.</i>';
           }
+          // Session Requests Management UI
+          let sessionRequestsHtml = '';
+          sessionRequestsHtml += `<div style="margin:10px 0;">
+            <b>Session Requests:</b>
+            <div id="sessionRequests_${course.id}">Loading...</div>
+          </div>`;
+          html += sessionRequestsHtml;
           html += '<hr>';
         });
         html += '</ul>';
@@ -256,6 +270,138 @@ function showAssignedCourses() {
         </div>`;
       });
       document.getElementById('assignedCoursesContainer').innerHTML = html;
+      
+      // Fetch and render session requests for each course
+      courses.forEach(course => {
+        fetch(`http://localhost:8080/api/courses/${course.id}/tutor-requests`, {
+          headers: { 'Authorization': 'Bearer ' + token }
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (!data.success) return;
+            const requests = data.requests || [];
+            const container = document.getElementById(`sessionRequests_${course.id}`);
+            if (!container) return;
+            if (requests.length === 0) {
+              container.innerHTML = '<i>No session requests yet.</i>';
+              return;
+            }
+            container.innerHTML = `<div>${requests.map((r, index) => `
+              <div style="border: 1px solid #ddd; padding: 10px; margin: 5px 0; border-radius: 5px; background: ${r.status === 'accepted' ? '#f0fff0' : r.status === 'rejected' ? '#fff0f0' : r.status === 'done' ? '#f0f8ff' : '#fffef0'}; ${r.isExtra ? 'border-left: 4px solid #ff9800;' : ''}">
+                <b>${r.isExtra ? '🔶 EXTRA ' : ''}Request ${index + 1} from ${r.studentEmail}:</b>
+                ${r.isExtra ? '<br><span style="color: #ff9800; font-weight: bold; font-size: 12px;">⚠️ This is an extra request beyond the 5-request limit</span>' : ''}
+                <br><b>Status:</b> <span style="color: ${r.status === 'accepted' ? 'green' : r.status === 'rejected' ? 'red' : r.status === 'done' ? 'blue' : 'orange'}; font-weight: bold;">${r.status.toUpperCase()}</span>
+                ${r.status === 'pending' ? `<br><br>
+                  <label><b>Schedule Date & Time:</b></label><br>
+                  <input type='datetime-local' id='schedule_${r.id}' style='margin:5px 0; padding:5px; border-radius:3px; border:1px solid #ccc;'><br>
+                  <label><b>Message for Student (Optional):</b></label><br>
+                  <textarea id='comment_${r.id}' placeholder='${r.isExtra ? 'Consider explaining why you are accepting/rejecting this extra request...' : 'Optional message for student...'}' style='width:100%; max-width:400px; height:60px; margin:5px 0; padding:5px; border-radius:3px; border:1px solid #ccc;'></textarea><br>
+                  <button class='acceptSessionBtn' data-course='${course.id}' data-id='${r.id}' data-student='${r.studentEmail}' style='background:#4CAF50; color:white; padding:8px 15px; border:none; border-radius:3px; margin-right:10px; cursor:pointer;'>✓ Accept & Send Jitsi</button>
+                  <button class='rejectSessionBtn' data-course='${course.id}' data-id='${r.id}' style='background:#f44336; color:white; padding:8px 15px; border:none; border-radius:3px; cursor:pointer;'>✗ Reject</button>
+                ` : ''}
+                ${r.status === 'accepted' ? `<br><b>Jitsi Link:</b> <a href='${r.jitsiLink}' target='_blank' style='color: #2196f3;'>${r.jitsiLink}</a>` : ''}
+                ${r.scheduledTime ? `<br><b>Scheduled Time:</b> <span style='color: #333; font-weight: bold;'>${new Date(r.scheduledTime).toLocaleString()}</span>` : ''}
+                ${r.comment ? `<br><b>Your Message:</b> <span style='color:#2196f3; font-style: italic;'>"${r.comment}"</span>` : ''}
+                ${r.status === 'done' ? `<br><span style='color:green;font-weight:bold;'>✓ Session Completed</span>` : ''}
+                ${r.requestedAt ? `<br><small style='color: #666;'>Requested: ${new Date(r.requestedAt).toLocaleString()}</small>` : ''}
+              </div>
+            `).join('')}</div>`;
+            
+            // Accept button handler
+            container.querySelectorAll('.acceptSessionBtn').forEach(btn => {
+              btn.addEventListener('click', function() {
+                const courseId = btn.getAttribute('data-course');
+                const requestId = btn.getAttribute('data-id');
+                const studentEmail = btn.getAttribute('data-student');
+                const scheduleInput = document.getElementById(`schedule_${requestId}`);
+                const commentInput = document.getElementById(`comment_${requestId}`);
+                const scheduledTime = scheduleInput ? scheduleInput.value : null;
+                const comment = commentInput ? commentInput.value.trim() : '';
+                
+                if (!scheduledTime) {
+                  alert('Please select a date and time for the session.');
+                  return;
+                }
+                const jitsiLink = generateJitsiLink(courseId, studentEmail);
+                btn.disabled = true;
+                btn.textContent = 'Sending...';
+                
+                const requestBody = { 
+                  status: 'accepted', 
+                  jitsiLink, 
+                  scheduledTime: new Date(scheduledTime).toISOString() 
+                };
+                if (comment) requestBody.comment = comment;
+                
+                fetch(`http://localhost:8080/api/courses/${courseId}/session-request/${requestId}/respond`, {
+                  method: 'PUT',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                  },
+                  body: JSON.stringify(requestBody)
+                })
+                  .then(res => res.json())
+                  .then(result => {
+                    if (result.success) {
+                      btn.textContent = 'Accepted';
+                    } else {
+                      btn.textContent = result.message || 'Error';
+                      btn.disabled = false;
+                    }
+                    setTimeout(() => showAssignedCourses(), 1200);
+                  })
+                  .catch(() => {
+                    btn.textContent = 'Error';
+                    btn.disabled = false;
+                  });
+              });
+            });
+            
+            // Reject button handler
+            container.querySelectorAll('.rejectSessionBtn').forEach(btn => {
+              btn.addEventListener('click', function() {
+                const courseId = btn.getAttribute('data-course');
+                const requestId = btn.getAttribute('data-id');
+                const commentInput = document.getElementById(`comment_${requestId}`);
+                const comment = commentInput ? commentInput.value.trim() : '';
+                
+                btn.disabled = true;
+                btn.textContent = 'Rejecting...';
+                
+                const requestBody = { status: 'rejected' };
+                if (comment) requestBody.comment = comment;
+                
+                fetch(`http://localhost:8080/api/courses/${courseId}/session-request/${requestId}/respond`, {
+                  method: 'PUT',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                  },
+                  body: JSON.stringify(requestBody)
+                })
+                  .then(res => res.json())
+                  .then(result => {
+                    if (result.success) {
+                      btn.textContent = 'Rejected';
+                    } else {
+                      btn.textContent = result.message || 'Error';
+                      btn.disabled = false;
+                    }
+                    setTimeout(() => showAssignedCourses(), 1200);
+                  })
+                  .catch(() => {
+                    btn.textContent = 'Error';
+                    btn.disabled = false;
+                  });
+              });
+            });
+          })
+          .catch((err) => {
+            const container = document.getElementById(`sessionRequests_${course.id}`);
+            if (container) container.innerHTML = `<span style='color:red;'>Error loading session requests: ${err}</span>`;
+          });
+      });
     })
     .catch(err => {
       console.error(err);
@@ -362,3 +508,24 @@ function showEditProfileForm() {
       console.error(err);
     });
 }
+
+// Add handler for the standalone Jitsi Meet button in dashboard
+function setupJitsiButtonHandler() {
+  const jitsiBtn = document.getElementById('generateJitsiBtn');
+  if (jitsiBtn) {
+    jitsiBtn.onclick = function() {
+      const randomStr = Math.random().toString(36).substring(2, 10);
+      const roomName = `TC_${randomStr}`;
+      const link = `https://meet.jit.si/${roomName}`;
+      const linkContainer = document.getElementById('jitsiLinkContainer');
+      if (linkContainer) {
+        linkContainer.innerHTML = `<a href="${link}" target="_blank">${link}</a>`;
+      }
+      console.log('Jitsi Meet link:', link);
+    };
+  }
+}
+
+// Set up the handler when DOM loads and also as a fallback
+document.addEventListener('DOMContentLoaded', setupJitsiButtonHandler);
+setTimeout(setupJitsiButtonHandler, 1000);
