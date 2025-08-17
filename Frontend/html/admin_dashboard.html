@@ -2,37 +2,1116 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard - TutorConnect</title>
   <link rel="stylesheet" href="../css/index.css">
 </head>
 <body>
-
-  <div class="login-container">
-    <h2>Welcome, Admin!</h2>
-    <p>Administer users, courses, and site settings.</p>
-    <button onclick="showCreateUserForm()">Create User/Tutor</button>
-    <button onclick="showEditTutorForm()">Edit Tutor Profile</button>
-    <button onclick="showCourseManagement()">Manage Courses</button>
-    <button onclick="window.location.href='site_settings.html'">Site Settings</button>
-    <button onclick="openChat()" style="background: #007bff; color: white; border: none; border-radius: 6px; padding: 10px 20px; font-size: 16px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">💬 Chat</button>
-    <button onclick="logout()">Log Out</button>
-
-    <div id="adminForms" style="margin-top:30px;display:none;"></div>
-    <div id="result" style="text-align:center;margin-top:20px;"></div>
-    <div id="courseForms" style="margin-top:30px;display:none;"></div>
-    <div id="courseResult" style="text-align:center;margin-top:20px;"></div>
+  <!-- Top Navigation Bar -->
+  <div class="top-nav">
+    <div class="nav-brand">
+      <img src="../css/tutorconnect-logo.png" alt="TutorConnect Logo" class="course-logo">
+      <h3>TutorConnect</h3>
+    </div>
+    <button id="logoutBtn" class="logout-btn">🚪 Log Out</button>
   </div>
+
+  <div class="main-container">
+    <!-- Main Dashboard -->
+    <div id="mainDashboard">
+      <div class="welcome-section">
+        <h1>Welcome Back, Admin! 👑</h1>
+        <p>Your administrative control panel awaits</p>
+      </div>
+      <div class="dashboard-buttons">
+        <button id="createUserBtn" class="dashboard-btn primary">
+          <span class="btn-icon">➕</span>
+          <span class="btn-text">Create User/Tutor</span>
+        </button>
+        <button id="editTutorBtn" class="dashboard-btn secondary">
+          <span class="btn-icon">✏️</span>
+          <span class="btn-text">Edit Tutor Profile</span>
+        </button>
+        <button id="manageCourseBtn" class="dashboard-btn tertiary">
+          <span class="btn-icon">📚</span>
+          <span class="btn-text">Manage Courses</span>
+        </button>
+        <button id="siteSettingsBtn" class="dashboard-btn quaternary">
+          <span class="btn-icon">⚙️</span>
+          <span class="btn-text">Site Settings</span>
+        </button>
+        <button id="chatBtn" class="dashboard-btn fifth">
+          <span class="btn-icon">💬</span>
+          <span class="btn-text">Chat</span>
+        </button>
+        <button id="searchTutorsBtn" class="dashboard-btn sixth">
+          <span class="btn-icon">🔍</span>
+          <span class="btn-text">Search/Edit Tutors</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Create User Section -->
+    <div id="createUserSection" style="display:none;">
+      <div class="section-header">
+        <h2>➕ Create User/Tutor</h2>
+        <button id="backToMainFromCreateBtn" class="back-btn">← Back to Dashboard</button>
+      </div>
+      <div class="admin-container">
+        <div id="adminForms"></div>
+        <div id="result" style="text-align:center;margin-top:20px;"></div>
+      </div>
+    </div>
+
+    <!-- Edit Tutor Section -->
+    <div id="editTutorSection" style="display:none;">
+      <div class="section-header">
+        <h2>✏️ Edit Tutor Profile</h2>
+        <button id="backToMainFromEditBtn" class="back-btn">← Back to Dashboard</button>
+      </div>
+      <div class="admin-container">
+        <div id="editTutorForms"></div>
+        <div id="editTutorResult" style="text-align:center;margin-top:20px;"></div>
+      </div>
+    </div>
+
+    <!-- Manage Courses Section -->
+    <div id="manageCourseSection" style="display:none;">
+      <div class="section-header">
+        <h2>📚 Manage Courses</h2>
+        <button id="backToMainFromCourseBtn" class="back-btn">← Back to Dashboard</button>
+      </div>
+      <div class="admin-container">
+        <div id="courseForms"></div>
+        <div id="courseResult" style="text-align:center;margin-top:20px;"></div>
+      </div>
+    </div>
+
+    <!-- Site Settings Section -->
+    <div id="siteSettingsSection" style="display:none;">
+      <div class="section-header">
+        <h2>⚙️ Site Settings</h2>
+        <button id="backToMainFromSettingsBtn" class="back-btn">← Back to Dashboard</button>
+      </div>
+      <div class="admin-container">
+        <div class="settings-grid">
+          <div class="setting-item">
+            <h3>🌐 General Settings</h3>
+            <p>Configure site-wide settings and preferences</p>
+            <button class="btn">Configure</button>
+          </div>
+          <div class="setting-item">
+            <h3>👥 User Management</h3>
+            <p>Manage user roles and permissions</p>
+            <button class="btn">Manage</button>
+          </div>
+          <div class="setting-item">
+            <h3>📊 Analytics</h3>
+            <p>View site analytics and statistics</p>
+            <button class="btn">View Analytics</button>
+          </div>
+          <div class="setting-item">
+            <h3>🔧 System Settings</h3>
+            <p>Configure system parameters</p>
+            <button class="btn">Configure</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search Tutors Section -->
+    <div id="searchTutorsSection" style="display:none;">
+      <div class="section-header">
+        <h2>🔍 Search/Edit Tutors</h2>
+        <button id="backToMainFromSearchBtn" class="back-btn">← Back to Dashboard</button>
+      </div>
+      <div class="admin-container">
+        <div id="searchTutorForms"></div>
+        <div id="searchTutorResult" style="text-align:center;margin-top:20px;"></div>
+      </div>
+    </div>
+  </div>
+  
   <script src="../js/admin_dashboard.js"></script>
   <script src="../js/show_username.js"></script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+
+    .top-nav {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .nav-brand h3 {
+      color: #667eea;
+      font-weight: 700;
+      font-size: 1.5rem;
+      margin: 0;
+    }
+
+    .course-logo {
+      width: 45px;
+      height: 45px;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .logout-btn {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+    }
+
+    .logout-btn:hover {
+      background: #c0392b;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+    }
+
+    .main-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .welcome-section {
+      text-align: center;
+      margin-bottom: 50px;
+      color: white;
+    }
+
+    .welcome-section h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .welcome-section p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+    }
+
+    .dashboard-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin: 40px 0;
+    }
+
+    .dashboard-btn {
+      background: rgba(255, 255, 255, 0.95);
+      border: none;
+      border-radius: 20px;
+      padding: 30px 25px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      min-height: 120px;
+    }
+
+    .dashboard-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    }
+
+    .dashboard-btn.primary { border-left: 5px solid #27ae60; }
+    .dashboard-btn.secondary { border-left: 5px solid #3498db; }
+    .dashboard-btn.tertiary { border-left: 5px solid #e67e22; }
+    .dashboard-btn.quaternary { border-left: 5px solid #9b59b6; }
+    .dashboard-btn.fifth { border-left: 5px solid #e91e63; }
+    .dashboard-btn.sixth { border-left: 5px solid #607d8b; }
+
+    .btn-icon {
+      font-size: 2.5rem;
+    }
+
+    .btn-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 20px 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-header h2 {
+      color: #2c3e50;
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+
+    .back-btn {
+      background: #95a5a6;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .back-btn:hover {
+      background: #7f8c8d;
+      transform: translateX(-3px);
+    }
+
+    .admin-container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      min-height: 400px;
+    }
+
+    .settings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+    }
+
+    .setting-item {
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 15px;
+      padding: 25px;
+      text-align: center;
+      border-left: 5px solid #3498db;
+      transition: all 0.3s ease;
+    }
+
+    .setting-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .setting-item h3 {
+      color: #2c3e50;
+      margin-bottom: 15px;
+      font-size: 1.3rem;
+    }
+
+    .setting-item p {
+      color: #7f8c8d;
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+    }
+
+    .btn {
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .btn:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+    }
+
+    /* Form styling */
+    #adminForms form, #editTutorForms form, #searchTutorForms form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    #adminForms input, #adminForms select, #adminForms textarea,
+    #editTutorForms input, #editTutorForms select, #editTutorForms textarea,
+    #searchTutorForms input, #searchTutorForms select, #searchTutorForms textarea {
+      padding: 12px 15px;
+      border: 2px solid #ecf0f1;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: #fff;
+    }
+
+    #adminForms input:focus, #adminForms select:focus, #adminForms textarea:focus,
+    #editTutorForms input:focus, #editTutorForms select:focus, #editTutorForms textarea:focus,
+    #searchTutorForms input:focus, #searchTutorForms select:focus, #searchTutorForms textarea:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+    }
+
+    #adminForms button[type="submit"], #editTutorForms button[type="submit"], #searchTutorForms button[type="submit"] {
+      background: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 15px 30px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+
+    #adminForms button[type="submit"]:hover, #editTutorForms button[type="submit"]:hover, #searchTutorForms button[type="submit"]:hover {
+      background: #229954;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+    }
+
+    /* Tables styling */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #ecf0f1;
+    }
+
+    th {
+      background: #3498db;
+      color: white;
+      font-weight: 600;
+    }
+
+    tr:hover {
+      background: #f8f9fa;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .main-container {
+        padding: 20px 15px;
+      }
+      
+      .welcome-section h1 {
+        font-size: 2rem;
+      }
+      
+      .dashboard-buttons {
+        grid-template-columns: 1fr;
+      }
+      
+      .section-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+      
+      .settings-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
   <script>
-    function logout() {
-      localStorage.removeItem('jwt');
-      window.location.href = 'login.html';
+    // Admin Dashboard Navigation - Exactly like student dashboard
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeAdminDashboard();
+    });
+
+    function initializeAdminDashboard() {
+      setupAdminNavigation();
     }
-    
-    function openChat() {
-      window.location.href = 'chat.html';
+
+    function setupAdminNavigation() {
+      // Create User button
+      document.getElementById('createUserBtn').addEventListener('click', function() {
+        showAdminSection('createUserSection');
+        // Clean up any unwanted elements before loading the form
+        setTimeout(() => {
+          cleanupCreateUserSection();
+          loadCreateUserForm();
+        }, 10);
+      });
+
+      // Edit Tutor button
+      document.getElementById('editTutorBtn').addEventListener('click', function() {
+        showAdminSection('editTutorSection');
+        loadEditTutorForm();
+      });
+
+      // Manage Courses button
+      document.getElementById('manageCourseBtn').addEventListener('click', function() {
+        showAdminSection('manageCourseSection');
+        loadCourseManagement();
+      });
+
+      // Site Settings button
+      document.getElementById('siteSettingsBtn').addEventListener('click', function() {
+        showAdminSection('siteSettingsSection');
+      });
+
+      // Chat button
+      document.getElementById('chatBtn').addEventListener('click', function() {
+        window.location.href = 'chat.html';
+      });
+
+      // Search Tutors button
+      document.getElementById('searchTutorsBtn').addEventListener('click', function() {
+        showAdminSection('searchTutorsSection');
+        loadSearchTutors();
+      });
+
+      // Logout button
+      document.getElementById('logoutBtn').addEventListener('click', function() {
+        localStorage.removeItem('jwt');
+        window.location.href = 'login.html';
+      });
+
+      // Back navigation buttons
+      document.getElementById('backToMainFromCreateBtn').addEventListener('click', function() {
+        showAdminSection('mainDashboard');
+      });
+
+      document.getElementById('backToMainFromEditBtn').addEventListener('click', function() {
+        showAdminSection('mainDashboard');
+      });
+
+      document.getElementById('backToMainFromCourseBtn').addEventListener('click', function() {
+        showAdminSection('mainDashboard');
+      });
+
+      document.getElementById('backToMainFromSettingsBtn').addEventListener('click', function() {
+        showAdminSection('mainDashboard');
+      });
+
+      document.getElementById('backToMainFromSearchBtn').addEventListener('click', function() {
+        showAdminSection('mainDashboard');
+      });
     }
+
+    function showAdminSection(sectionId) {
+      // Hide all sections
+      const sections = ['mainDashboard', 'createUserSection', 'editTutorSection', 'manageCourseSection', 'siteSettingsSection', 'searchTutorsSection'];
+      sections.forEach(id => {
+        document.getElementById(id).style.display = 'none';
+      });
+      
+      // Show the requested section
+      document.getElementById(sectionId).style.display = 'block';
+    }
+
+    function cleanupCreateUserSection() {
+      // Remove any unwanted buttons from the Create User section
+      const createUserSection = document.getElementById('createUserSection');
+      if (createUserSection) {
+        const buttons = createUserSection.querySelectorAll('button');
+        buttons.forEach(btn => {
+          // Keep only the back button and form submit buttons
+          if (!btn.classList.contains('back-btn') && 
+              btn.type !== 'submit' && 
+              !btn.closest('form') &&
+              (btn.textContent.includes('Search') || 
+               btn.textContent.includes('Tutor') ||
+               btn.textContent.includes('Edit'))) {
+            btn.remove();
+          }
+        });
+        
+        // Also clean up any extra elements that might be added
+        const adminContainer = createUserSection.querySelector('.admin-container');
+        if (adminContainer) {
+          const children = Array.from(adminContainer.children);
+          children.forEach(child => {
+            if (child.id !== 'adminForms' && child.id !== 'result' && child.tagName === 'BUTTON') {
+              child.remove();
+            }
+          });
+        }
+      }
+    }
+
+    function loadCreateUserForm() {
+      // Clear the target divs first and prevent any external interference
+      const adminFormsDiv = document.getElementById('adminForms');
+      const resultDiv = document.getElementById('result');
+      
+      // Clear everything completely
+      adminFormsDiv.innerHTML = '';
+      resultDiv.innerHTML = '';
+      
+      // Also clear any potential interference from the original admin_dashboard.js
+      const adminContainer = adminFormsDiv.parentElement;
+      if (adminContainer) {
+        // Remove any unwanted buttons that might be added by admin_dashboard.js
+        const unwantedButtons = adminContainer.querySelectorAll('button:not(.back-btn)');
+        unwantedButtons.forEach(btn => {
+          if (btn.textContent.includes('Search') || btn.textContent.includes('Tutor') && !btn.closest('form')) {
+            btn.remove();
+          }
+        });
+      }
+      
+      // Create the form directly with a timeout to ensure it loads after any interference
+      setTimeout(() => {
+        const formHtml = `
+          <form id="createUserForm">
+            <h3 style="color: #2c3e50; margin-bottom: 20px;">Create User/Tutor</h3>
+            <input type="text" name="username" placeholder="Username" required><br>
+            <input type="email" name="email" placeholder="Email" required><br>
+            <input type="password" name="password" placeholder="Password" required><br>
+            <select name="role">
+              <option value="STUDENT">Student</option>
+              <option value="TUTOR">Tutor</option>
+              <option value="ADMIN">Admin</option>
+            </select><br>
+            <textarea name="bio" placeholder="Bio"></textarea><br>
+            <input type="text" name="subjects" placeholder="Subjects (comma separated)"><br>
+            <button type="submit">Create User</button>
+          </form>
+        `;
+        
+        adminFormsDiv.innerHTML = formHtml;
+        
+        // Remove any buttons that might appear after form creation
+        setTimeout(() => {
+          const container = document.getElementById('createUserSection');
+          if (container) {
+            const unwantedBtns = container.querySelectorAll('button');
+            unwantedBtns.forEach(btn => {
+              if (btn.textContent.includes('Search') || (btn.textContent.includes('Tutors') && !btn.closest('form') && !btn.classList.contains('back-btn'))) {
+                btn.remove();
+              }
+            });
+          }
+        }, 100);
+        
+        // Handle form submission
+        document.getElementById('createUserForm').onsubmit = async function(e) {
+          e.preventDefault();
+          const form = e.target;
+          const token = localStorage.getItem('jwt');
+          const data = {
+            username: form.username.value,
+            email: form.email.value,
+            passwordHash: form.password.value,
+            role: form.role.value,
+            bio: form.bio.value,
+            subjects: form.subjects.value.split(',').map(s => s.trim()),
+            languages: [],
+            availability: ''
+          };
+          
+          try {
+            const res = await fetch('http://localhost:8080/api/admin/create-user', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+              },
+              body: JSON.stringify(data)
+            });
+            
+            let result;
+            if (res.ok) {
+              result = await res.json();
+              resultDiv.textContent = result.success ? 'User created successfully!' : (result.message || 'Error creating user');
+              resultDiv.style.color = result.success ? 'green' : 'red';
+              // Clear form on success
+              if (result.success) {
+                form.reset();
+              }
+            } else {
+              try {
+                result = await res.json();
+                resultDiv.textContent = result.message || 'Error: ' + res.status;
+                resultDiv.style.color = 'red';
+              } catch {
+                resultDiv.textContent = 'Error: ' + res.status;
+                resultDiv.style.color = 'red';
+              }
+            }
+          } catch (error) {
+            resultDiv.textContent = 'Network error occurred';
+            resultDiv.style.color = 'red';
+          }
+        };
+      }, 50);
+    }
+
+    function loadEditTutorForm() {
+      // For edit tutor, we need to use adminForms since original function uses it
+      const targetDiv = document.getElementById('editTutorForms');
+      const originalAdminForms = document.getElementById('adminForms');
+      const originalResult = document.getElementById('result');
+      
+      // Temporarily redirect the original function to use our section
+      if (typeof showEditTutorForm === 'function') {
+        // Create temporary divs in the edit section to catch the original function output
+        targetDiv.innerHTML = '<div id="tempAdminForms"></div><div id="tempResult"></div>';
+        
+        // Temporarily replace the original divs
+        const tempAdminForms = document.getElementById('tempAdminForms');
+        const tempResult = document.getElementById('tempResult');
+        
+        // Override the original function to use our divs
+        const originalShow = showEditTutorForm;
+        window.showEditTutorForm = function() {
+          const formHtml = `
+            <form id="editTutorForm">
+              <h3>Edit Tutor Profile</h3>
+              <input type="text" name="id" placeholder="Tutor ID" required><br>
+              <input type="text" name="username" placeholder="Username"><br>
+              <input type="email" name="email" placeholder="Email"><br>
+              <textarea name="bio" placeholder="Bio"></textarea><br>
+              <input type="text" name="subjects" placeholder="Subjects (comma separated)"><br>
+              <button type="submit">Update</button>
+            </form>
+          `;
+          targetDiv.innerHTML = formHtml;
+          document.getElementById('editTutorResult').textContent = '';
+          
+          document.getElementById('editTutorForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const token = localStorage.getItem('jwt');
+            const data = {
+              username: form.username.value,
+              email: form.email.value,
+              bio: form.bio.value,
+              subjects: form.subjects.value.split(',').map(s => s.trim()),
+              languages: [],
+              availability: ''
+            };
+            const res = await fetch('http://localhost:8080/api/admin/edit-tutor/' + form.id.value, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+              },
+              body: JSON.stringify(data)
+            });
+            let result;
+            if (res.ok) {
+              result = await res.json();
+              document.getElementById('editTutorResult').textContent = result.success ? 'Tutor updated!' : (result.message || 'Error');
+            } else {
+              try {
+                result = await res.json();
+                document.getElementById('editTutorResult').textContent = result.message || 'Error: ' + res.status;
+              } catch {
+                document.getElementById('editTutorResult').textContent = 'Error: ' + res.status;
+              }
+            }
+          };
+        };
+        
+        showEditTutorForm();
+        // Restore original function
+        window.showEditTutorForm = originalShow;
+      }
+    }
+
+    function loadCourseManagement() {
+      // For course management, we need to redirect to use our section
+      const targetDiv = document.getElementById('courseForms');
+      const resultDiv = document.getElementById('courseResult');
+      
+      if (typeof showCourseManagement === 'function') {
+        // Override the function to use our divs with proper styling
+        const originalShow = showCourseManagement;
+        window.showCourseManagement = function() {
+          const html = `
+            <div style="margin-bottom:20px;">
+              <form id="searchCourseForm" style="display:inline-block;">
+                <input type="text" name="query" placeholder="Search by title, subject, or tutor" required style="padding: 12px 15px; border: 2px solid #ecf0f1; border-radius: 10px; font-size: 1rem; background: #fff; margin-right: 10px;">
+                <button type="submit" style="background: #27ae60; color: white; border: none; border-radius: 25px; padding: 12px 25px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">Search</button>
+              </form>
+              <button id="showAllCoursesBtn" style="background: #3498db; color: white; border: none; border-radius: 25px; padding: 12px 25px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin-left: 10px;">Show All Courses</button>
+              <button id="showCreateCourseBtn" style="background: #e67e22; color: white; border: none; border-radius: 25px; padding: 12px 25px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin-left: 10px;">Create Course</button>
+            </div>
+            <div id="courseList"></div>
+            <div id="editCourseContainer"></div>
+            <div id="createCourseContainer"></div>
+          `;
+          targetDiv.innerHTML = html;
+          resultDiv.textContent = '';
+
+          // Add hover effects
+          const buttons = targetDiv.querySelectorAll('button');
+          buttons.forEach(btn => {
+            btn.addEventListener('mouseenter', function() {
+              this.style.transform = 'translateY(-2px)';
+              this.style.boxShadow = '0 5px 15px rgba(0,0,0,0.2)';
+            });
+            btn.addEventListener('mouseleave', function() {
+              this.style.transform = 'translateY(0)';
+              this.style.boxShadow = 'none';
+            });
+          });
+
+          // Real-time search
+          const searchInput = document.querySelector('#searchCourseForm input[name="query"]');
+          let debounceTimeout;
+          searchInput.addEventListener('input', function(e) {
+            clearTimeout(debounceTimeout);
+            const query = e.target.value;
+            debounceTimeout = setTimeout(() => {
+              if (query.trim().length > 0) {
+                fetchAndDisplayCourses('search', query);
+              } else {
+                document.getElementById('courseList').innerHTML = '';
+              }
+            }, 300);
+          });
+          
+          document.getElementById('showAllCoursesBtn').onclick = async function() {
+            await fetchAndDisplayCourses('all');
+          };
+          
+          document.getElementById('showCreateCourseBtn').onclick = function() {
+            showCreateCourseForm();
+          };
+        };
+        
+        showCourseManagement();
+        // Restore original function  
+        window.showCourseManagement = originalShow;
+      }
+    }
+
+    function loadSearchTutors() {
+      // For search tutors, we need to redirect to use our section
+      const targetDiv = document.getElementById('searchTutorForms');
+      const resultDiv = document.getElementById('searchTutorResult');
+      
+      if (typeof showTutorSearchAndList === 'function') {
+        // Override the function to use our divs with proper styling
+        const originalShow = showTutorSearchAndList;
+        window.showTutorSearchAndList = function() {
+          const html = `
+            <div style="margin-bottom:20px;">
+              <form id="searchTutorForm" style="display:inline-block;">
+                <input type="text" name="query" placeholder="Search by username or email" required style="padding: 12px 15px; border: 2px solid #ecf0f1; border-radius: 10px; font-size: 1rem; background: #fff; margin-right: 10px;">
+                <button type="submit" style="background: #27ae60; color: white; border: none; border-radius: 25px; padding: 12px 25px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">Search</button>
+              </form>
+              <button id="showAllTutorsBtn" style="background: #3498db; color: white; border: none; border-radius: 25px; padding: 12px 25px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin-left: 10px;">Show All Tutors</button>
+            </div>
+            <div id="tutorList"></div>
+            <div id="editTutorContainer"></div>
+          `;
+          targetDiv.innerHTML = html;
+          resultDiv.textContent = '';
+
+          // Add hover effects to buttons
+          const buttons = targetDiv.querySelectorAll('button');
+          buttons.forEach(btn => {
+            btn.addEventListener('mouseenter', function() {
+              this.style.transform = 'translateY(-2px)';
+              this.style.boxShadow = '0 5px 15px rgba(0,0,0,0.2)';
+            });
+            btn.addEventListener('mouseleave', function() {
+              this.style.transform = 'translateY(0)';
+              this.style.boxShadow = 'none';
+            });
+          });
+
+          // Real-time search
+          const searchInput = document.querySelector('#searchTutorForm input[name="query"]');
+          let debounceTimeout;
+          searchInput.addEventListener('input', function(e) {
+            clearTimeout(debounceTimeout);
+            const query = e.target.value;
+            debounceTimeout = setTimeout(() => {
+              if (query.trim().length > 0) {
+                fetchAndDisplayTutors('search', query);
+              } else {
+                document.getElementById('tutorList').innerHTML = '';
+              }
+            }, 300);
+          });
+          document.getElementById('showAllTutorsBtn').onclick = async function() {
+            await fetchAndDisplayTutors('all');
+          };
+        };
+        
+        showTutorSearchAndList();
+        // Restore original function  
+        window.showTutorSearchAndList = originalShow;
+      }
+    }
+
+    // Add the fetchAndDisplayTutors function needed for search
+    async function fetchAndDisplayTutors(type, query) {
+      const token = localStorage.getItem('jwt');
+      let url = '';
+      if(type === 'all') url = 'http://localhost:8080/api/admin/tutors';
+      else url = 'http://localhost:8080/api/admin/search-tutor?query=' + encodeURIComponent(query);
+      const res = await fetch(url, {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      let tutors = [];
+      if(res.ok) tutors = await res.json();
+      const listDiv = document.getElementById('tutorList');
+      if(tutors.length === 0) {
+        listDiv.innerHTML = '<p>No tutors found.</p>';
+        return;
+      }
+      let html = '<table border="1" style="width:100%;text-align:left;"><tr>' +
+        '<th>Username</th><th>Email</th><th>Bio</th><th>Subjects</th><th>Languages</th><th>Availability</th><th>Edit</th></tr>';
+      tutors.forEach(t => {
+        html += `<tr>
+          <td>${t.username}</td>
+          <td>${t.email}</td>
+          <td>${t.bio}</td>
+          <td>${Array.isArray(t.subjects) ? t.subjects.join(', ') : ''}</td>
+          <td>${Array.isArray(t.languages) ? t.languages.join(', ') : ''}</td>
+          <td>${t.availability}</td>
+          <td><button onclick="editTutor('${t.id}', '${encodeURIComponent(JSON.stringify(t))}')">Edit</button></td>
+        </tr>`;
+      });
+      html += '</table>';
+      listDiv.innerHTML = html;
+    }
+
+    // Add the editTutor function for inline editing from search results
+    window.editTutor = function(id, encodedTutor) {
+      const t = JSON.parse(decodeURIComponent(encodedTutor));
+      const formHtml = `
+        <form id="editSelectedTutorForm">
+          <h3>Edit Tutor Profile</h3>
+          <input type="hidden" name="id" value="${t.id}">
+          <input type="text" name="username" placeholder="Username" value="${t.username}"><br>
+          <input type="email" name="email" placeholder="Email" value="${t.email}"><br>
+          <textarea name="bio" placeholder="Bio">${t.bio || ''}</textarea><br>
+          <input type="text" name="subjects" placeholder="Subjects (comma separated)" value="${Array.isArray(t.subjects) ? t.subjects.join(', ') : ''}"><br>
+          <input type="text" name="languages" placeholder="Languages (comma separated)" value="${Array.isArray(t.languages) ? t.languages.join(', ') : ''}"><br>
+          <input type="text" name="availability" placeholder="Availability" value="${t.availability || ''}"><br>
+          <button type="submit">Update</button>
+        </form>
+      `;
+      document.getElementById('editTutorContainer').innerHTML = formHtml;
+      document.getElementById('editSelectedTutorForm').onsubmit = async function(e) {
+        e.preventDefault();
+        const form = e.target;
+        const token = localStorage.getItem('jwt');
+        const data = {
+          username: form.username.value,
+          email: form.email.value,
+          bio: form.bio.value,
+          subjects: form.subjects.value.split(',').map(s => s.trim()),
+          languages: form.languages.value.split(',').map(l => l.trim()),
+          availability: form.availability.value
+        };
+        const res = await fetch('http://localhost:8080/api/admin/edit-tutor/' + form.id.value, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify(data)
+        });
+        let result;
+        if (res.ok) {
+          result = await res.json();
+          document.getElementById('searchTutorResult').textContent = result.success ? 'Tutor updated!' : (result.message || 'Error');
+          await fetchAndDisplayTutors('all'); // Refresh list
+          document.getElementById('editTutorContainer').innerHTML = '';
+        } else {
+          try {
+            result = await res.json();
+            document.getElementById('searchTutorResult').textContent = result.message || 'Error: ' + res.status;
+          } catch {
+            document.getElementById('searchTutorResult').textContent = 'Error: ' + res.status;
+          }
+        }
+      };
+    };
+
+    // Add the fetchAndDisplayCourses function needed for course management
+    async function fetchAndDisplayCourses(type, query) {
+      const token = localStorage.getItem('jwt');
+      let url = '';
+      if(type === 'all') url = 'http://localhost:8080/api/admin/courses';
+      else url = 'http://localhost:8080/api/admin/search-course?query=' + encodeURIComponent(query);
+      const res = await fetch(url, {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      let courses = [];
+      if(res.ok) courses = await res.json();
+      const listDiv = document.getElementById('courseList');
+      if(courses.length === 0) {
+        listDiv.innerHTML = '<p>No courses found.</p>';
+        return;
+      }
+      let html = '<table style="width:100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin-top: 20px;"><tr>' +
+        '<th style="padding: 15px; text-align: left; border-bottom: 1px solid #ecf0f1; background: #3498db; color: white; font-weight: 600;">Title</th>' +
+        '<th style="padding: 15px; text-align: left; border-bottom: 1px solid #ecf0f1; background: #3498db; color: white; font-weight: 600;">Subject</th>' +
+        '<th style="padding: 15px; text-align: left; border-bottom: 1px solid #ecf0f1; background: #3498db; color: white; font-weight: 600;">Description</th>' +
+        '<th style="padding: 15px; text-align: left; border-bottom: 1px solid #ecf0f1; background: #3498db; color: white; font-weight: 600;">Tutor ID</th>' +
+        '<th style="padding: 15px; text-align: left; border-bottom: 1px solid #ecf0f1; background: #3498db; color: white; font-weight: 600;">Edit</th></tr>';
+      courses.forEach(c => {
+        html += `<tr style="border-bottom: 1px solid #ecf0f1;" onmouseover="this.style.background='#f8f9fa'" onmouseout="this.style.background='white'">
+          <td style="padding: 15px;">${c.title}</td>
+          <td style="padding: 15px;">${c.subject}</td>
+          <td style="padding: 15px;">${c.description || ''}</td>
+          <td style="padding: 15px;">${c.tutorId}</td>
+          <td style="padding: 15px;"><button onclick="editCourse('${c.id}', '${encodeURIComponent(JSON.stringify(c))}')" style="background: #3498db; color: white; border: none; border-radius: 15px; padding: 8px 16px; cursor: pointer; font-size: 0.9rem;">Edit</button></td>
+        </tr>`;
+      });
+      html += '</table>';
+      listDiv.innerHTML = html;
+    }
+
+    // Add the showCreateCourseForm function
+    window.showCreateCourseForm = function() {
+      const formHtml = `
+        <form id="createCourseForm" style="background: rgba(255, 255, 255, 0.9); padding: 25px; border-radius: 15px; margin-top: 20px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
+          <h3 style="color: #2c3e50; margin-bottom: 20px;">Create New Course</h3>
+          <input type="text" name="title" placeholder="Course Title" required style="padding: 12px 15px; border: 2px solid #ecf0f1; border-radius: 10px; font-size: 1rem; background: #fff; width: 100%; margin-bottom: 15px;"><br>
+          <input type="text" name="subject" placeholder="Subject" required style="padding: 12px 15px; border: 2px solid #ecf0f1; border-radius: 10px; font-size: 1rem; background: #fff; width: 100%; margin-bottom: 15px;"><br>
+          <textarea name="description" placeholder="Course Description" style="padding: 12px 15px; border: 2px solid #ecf0f1; border-radius: 10px; font-size: 1rem; background: #fff; width: 100%; margin-bottom: 15px; min-height: 100px;"></textarea><br>
+          <input type="text" name="tutorId" placeholder="Tutor ID" required style="padding: 12px 15px; border: 2px solid #ecf0f1; border-radius: 10px; font-size: 1rem; background: #fff; width: 100%; margin-bottom: 15px;"><br>
+          <button type="submit" style="background: #27ae60; color: white; border: none; border-radius: 25px; padding: 15px 30px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin-top: 10px;">Create Course</button>
+        </form>
+      `;
+      document.getElementById('createCourseContainer').innerHTML = formHtml;
+      
+      document.getElementById('createCourseForm').onsubmit = async function(e) {
+        e.preventDefault();
+        const form = e.target;
+        const token = localStorage.getItem('jwt');
+        const data = {
+          title: form.title.value,
+          subject: form.subject.value,
+          description: form.description.value,
+          tutorId: form.tutorId.value
+        };
+        const res = await fetch('http://localhost:8080/api/admin/create-course', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify(data)
+        });
+        let result;
+        if (res.ok) {
+          result = await res.json();
+          document.getElementById('courseResult').textContent = result.success ? 'Course created successfully!' : (result.message || 'Error');
+          document.getElementById('courseResult').style.color = result.success ? 'green' : 'red';
+          if (result.success) {
+            form.reset();
+            await fetchAndDisplayCourses('all'); // Refresh list
+          }
+        } else {
+          try {
+            result = await res.json();
+            document.getElementById('courseResult').textContent = result.message || 'Error: ' + res.status;
+            document.getElementById('courseResult').style.color = 'red';
+          } catch {
+            document.getElementById('courseResult').textContent = 'Error: ' + res.status;
+            document.getElementById('courseResult').style.color = 'red';
+          }
+        }
+      };
+    };
+
+    // Add the editCourse function for inline editing from course search results
+    window.editCourse = function(id, encodedCourse) {
+      const c = JSON.parse(decodeURIComponent(encodedCourse));
+      const formHtml = `
+        <form id="editSelectedCourseForm" style="background: rgba(255, 255, 255, 0.9); padding: 25px; border-radius: 15px; margin-top: 20px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
+          <h3 style="color: #2c3e50; margin-bottom: 20px;">Edit Course</h3>
+          <input type="hidden" name="id" value="${c.id}">
+          <input type="text" name="title" placeholder="Course Title" value="${c.title}" style="padding: 12px 15px; border: 2px solid #ecf0f1; border-radius: 10px; font-size: 1rem; background: #fff; width: 100%; margin-bottom: 15px;"><br>
+          <input type="text" name="subject" placeholder="Subject" value="${c.subject}" style="padding: 12px 15px; border: 2px solid #ecf0f1; border-radius: 10px; font-size: 1rem; background: #fff; width: 100%; margin-bottom: 15px;"><br>
+          <textarea name="description" placeholder="Course Description" style="padding: 12px 15px; border: 2px solid #ecf0f1; border-radius: 10px; font-size: 1rem; background: #fff; width: 100%; margin-bottom: 15px; min-height: 100px;">${c.description || ''}</textarea><br>
+          <input type="text" name="tutorId" placeholder="Tutor ID" value="${c.tutorId}" style="padding: 12px 15px; border: 2px solid #ecf0f1; border-radius: 10px; font-size: 1rem; background: #fff; width: 100%; margin-bottom: 15px;"><br>
+          <button type="submit" style="background: #27ae60; color: white; border: none; border-radius: 25px; padding: 15px 30px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin-top: 10px;">Update Course</button>
+        </form>
+      `;
+      document.getElementById('editCourseContainer').innerHTML = formHtml;
+      
+      document.getElementById('editSelectedCourseForm').onsubmit = async function(e) {
+        e.preventDefault();
+        const form = e.target;
+        const token = localStorage.getItem('jwt');
+        const data = {
+          title: form.title.value,
+          subject: form.subject.value,
+          description: form.description.value,
+          tutorId: form.tutorId.value
+        };
+        const res = await fetch('http://localhost:8080/api/admin/edit-course/' + form.id.value, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify(data)
+        });
+        let result;
+        if (res.ok) {
+          result = await res.json();
+          document.getElementById('courseResult').textContent = result.success ? 'Course updated!' : (result.message || 'Error');
+          document.getElementById('courseResult').style.color = result.success ? 'green' : 'red';
+          await fetchAndDisplayCourses('all'); // Refresh list
+          document.getElementById('editCourseContainer').innerHTML = '';
+        } else {
+          try {
+            result = await res.json();
+            document.getElementById('courseResult').textContent = result.message || 'Error: ' + res.status;
+            document.getElementById('courseResult').style.color = 'red';
+          } catch {
+            document.getElementById('courseResult').textContent = 'Error: ' + res.status;
+            document.getElementById('courseResult').style.color = 'red';
+          }
+        }
+      };
+    };
   </script>
 </body>
 </html>

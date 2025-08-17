@@ -1,0 +1,324 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  color: white;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.course-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.site-title {
+  color: #4169E1;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-greeting {
+  color: #333;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.dashboard-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+.dashboard-btn:hover {
+  background: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+}
+
+.main-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.course-details-container {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 40px;
+  margin: 20px auto;
+  max-width: 800px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.course-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 30px;
+  margin: 20px 0;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #333;
+}
+
+.course-card h2 {
+  color: #333;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.course-card p {
+  color: #555;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.course-card strong {
+  color: #333;
+  font-weight: 600;
+}
+
+.enroll-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 15px;
+  padding: 18px 40px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  display: block;
+  margin: 30px auto 0;
+}
+
+.enroll-btn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.enroll-btn:disabled {
+  background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+#averageRating {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 25px;
+  margin: 20px 0;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #333;
+}
+
+#averageRating strong {
+  color: #333;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+#ratingsList {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 25px;
+  margin: 20px 0;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #333;
+}
+
+.rating-card {
+  background: rgba(240, 240, 240, 0.9);
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  padding: 18px;
+  margin: 12px 0;
+  transition: all 0.3s ease;
+}
+
+.rating-card:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(102, 126, 234, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.rating-card span {
+  color: #FFD700;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.rating-card p {
+  color: #555;
+  font-size: 16px;
+  margin: 10px 0;
+  line-height: 1.5;
+}
+
+.rating-card small {
+  color: #777;
+  font-size: 14px;
+}
+
+#ratingFormContainer {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 30px;
+  margin: 20px 0;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #333;
+}
+
+#ratingFormContainer h3 {
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+#ratingForm label {
+  color: #333;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+#ratingForm select, #ratingForm textarea {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  font-size: 16px;
+  margin-bottom: 15px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+#ratingForm select:focus, #ratingForm textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+}
+
+#ratingForm select {
+  width: 150px;
+}
+
+#ratingForm textarea {
+  min-height: 100px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+#ratingForm select::placeholder, #ratingForm textarea::placeholder {
+  color: rgba(51, 51, 51, 0.7);
+}
+
+#ratingForm button[type="submit"] {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 15px;
+  padding: 18px 40px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  display: block;
+  margin: 30px auto 0;
+}
+
+#ratingForm button[type="submit"]:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+#ratingError {
+  color: #FF6B6B;
+  font-size: 14px;
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .main-container {
+    padding: 20px;
+  }
+
+  .course-details-container {
+    padding: 20px;
+  }
+
+  .header-content {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+
+  .course-card h2 {
+    font-size: 24px;
+  }
+}

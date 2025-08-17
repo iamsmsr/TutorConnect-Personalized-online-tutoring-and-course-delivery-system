@@ -2,34 +2,456 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Student Dashboard - TutorConnect</title>
   <link rel="stylesheet" href="../css/index.css">
+  <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
-  <div class="login-container">
-    <h2>Welcome, Student!</h2>
-    <p>Your personalized dashboard for finding tutors and courses.</p>
-    <button id="browseCoursesBtn">Browse Courses</button>
-    <button onclick="showEditProfileForm()">Edit Profile</button>
-    <button onclick="openChat()" style="background: #007bff; color: white; border: none; border-radius: 6px; padding: 10px 20px; font-size: 16px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">💬 Chat</button>
-    <button onclick="logout()">Log Out</button>
-    <div id="browseCoursesSection" style="display:none; margin-top:20px;">
-      <input type="text" id="studentSearchBar" class="search-bar" placeholder="Search our courses..." style="width:100%;max-width:400px;">
-      <div id="studentSearchResults"></div>
+  <!-- Top Navigation Bar -->
+  <div class="top-nav">
+    <div class="nav-brand">
+      <img src="../css/tutorconnect-logo.png" alt="TutorConnect Logo" class="course-logo">
+      <h3>TutorConnect</h3>
     </div>
-    <div id="profileEditContainer" style="margin-top:30px;"></div>
+    <button id="logoutBtn" class="logout-btn">🚪 Log Out</button>
   </div>
+
+  <div class="main-container">
+    <!-- Main Dashboard -->
+    <div id="mainDashboard">
+      <div class="welcome-section">
+        <h1>Welcome Back, Student! 🎓</h1>
+        <p>Your personalized learning dashboard awaits</p>
+      </div>
+      <div class="dashboard-buttons">
+        <button id="continueLearningBtn" class="dashboard-btn primary">
+          <span class="btn-icon">📚</span>
+          <span class="btn-text">Continue Learning</span>
+        </button>
+        <button id="browseCoursesBtn" class="dashboard-btn secondary">
+          <span class="btn-icon">🔍</span>
+          <span class="btn-text">Browse Courses</span>
+        </button>
+        <button id="certificatesBtn" class="dashboard-btn certificate">
+          <span class="btn-icon">🏆</span>
+          <span class="btn-text">Certificates</span>
+        </button>
+        <button id="editProfileBtn" class="dashboard-btn tertiary">
+          <span class="btn-icon">👤</span>
+          <span class="btn-text">Edit Profile</span>
+        </button>
+        <button id="chatBtn" class="dashboard-btn quaternary">
+          <span class="btn-icon">💬</span>
+          <span class="btn-text">Chat</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Continue Learning Section -->
+    <div id="continueLearningSection" style="display:none;">
+      <div class="section-header">
+        <h2>📚 My Enrolled Courses</h2>
+        <button id="backToMainBtn" class="back-btn">← Back to Dashboard</button>
+      </div>
+      <div id="enrolledCoursesList" class="courses-grid">Loading...</div>
+    </div>
+
+    <!-- Individual Course View -->
+    <div id="courseViewSection" style="display:none;">
+      <!-- Course Title and Back Button -->
+      <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <h2 id="courseTitle" style="color: white; font-size: 1.8rem; margin: 0;"></h2>
+        <button id="backToCoursesBtn" class="back-btn">← Back to Courses</button>
+      </div>
+      
+      <div class="course-action-buttons">
+        <button id="videoBtn" class="course-action-btn video">
+          <span class="btn-icon">📹</span>
+          <span>Videos</span>
+        </button>
+        <button id="documentBtn" class="course-action-btn document">
+          <span class="btn-icon">📄</span>
+          <span>Documents</span>
+        </button>
+        <button id="assignmentBtn" class="course-action-btn assignment">
+          <span class="btn-icon">📝</span>
+          <span>Assignments</span>
+        </button>
+        <button id="practiceBtn" class="course-action-btn practice">
+          <span class="btn-icon">🧠</span>
+          <span>Practice</span>
+        </button>
+        <button id="requestSessionBtn" class="course-action-btn session">
+          <span class="btn-icon">👨‍🏫</span>
+          <span>Request Session</span>
+        </button>
+        <button id="courseDetailsBtn" class="course-action-btn details">
+          <span class="btn-icon">ℹ️</span>
+          <span>Course Details</span>
+        </button>
+      </div>
+      <div id="courseContentArea" class="content-area"></div>
+    </div>
+
+    <!-- Browse Courses Section -->
+    <div id="browseCoursesSection" style="display:none;">
+      <div class="section-header">
+        <h2>🔍 Browse Courses</h2>
+        <button id="backToMainFromBrowseBtn" class="back-btn">← Back to Dashboard</button>
+      </div>
+      <div class="search-container">
+        <input type="text" id="studentSearchBar" class="search-input" placeholder="🔍 Search our courses...">
+      </div>
+      <div id="studentSearchResults" class="courses-grid"></div>
+    </div>
+
+    <!-- Certificates Section -->
+    <div id="certificatesSection" style="display:none;">
+      <div class="section-header">
+        <h2>🏆 My Certificates</h2>
+        <button id="backToMainFromCertificatesBtn" class="back-btn">← Back to Dashboard</button>
+      </div>
+      <div id="certificatesList" class="courses-grid">Loading certificates...</div>
+    </div>
+
+    <!-- Edit Profile Section -->
+    <div id="editProfileSection" style="display:none;">
+      <div class="section-header">
+        <h2>👤 Edit Profile</h2>
+        <button id="backToMainFromProfileBtn" class="back-btn">← Back to Dashboard</button>
+      </div>
+      <div id="profileEditContainer" class="profile-container"></div>
+    </div>
+  </div>
+  
   <script src="../js/student_dashboard.js"></script>
   <script src="../js/show_username.js"></script>
-  <script>
-    function logout() {
-      localStorage.removeItem('jwt');
-      window.location.href = 'login.html';
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    
-    function openChat() {
-      window.location.href = 'chat.html';
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
     }
-  </script>
+
+    .top-nav {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .course-page-header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      border-radius: 15px;
+      margin-bottom: 20px;
+    }
+
+    .nav-brand, .course-nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .nav-brand h3, .course-nav-brand h3 {
+      color: #667eea;
+      font-weight: 700;
+      font-size: 1.5rem;
+      margin: 0;
+    }
+
+    .course-logo {
+      width: 45px;
+      height: 45px;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .logout-btn {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+    }
+
+    .logout-btn:hover {
+      background: #c0392b;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+    }
+
+    .main-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .welcome-section {
+      text-align: center;
+      margin-bottom: 50px;
+      color: white;
+    }
+
+    .welcome-section h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .welcome-section p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+    }
+
+    .dashboard-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin: 40px 0;
+    }
+
+    .dashboard-btn {
+      background: rgba(255, 255, 255, 0.95);
+      border: none;
+      border-radius: 20px;
+      padding: 30px 25px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      min-height: 120px;
+    }
+
+    .dashboard-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    }
+
+    .dashboard-btn.primary { border-left: 5px solid #3498db; }
+    .dashboard-btn.secondary { border-left: 5px solid #9b59b6; }
+    .dashboard-btn.tertiary { border-left: 5px solid #e67e22; }
+    .dashboard-btn.quaternary { border-left: 5px solid #1abc9c; }
+
+    .btn-icon {
+      font-size: 2.5rem;
+    }
+
+    .btn-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 20px 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-header h2 {
+      color: #2c3e50;
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+
+    .back-btn {
+      background: #95a5a6;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .back-btn:hover {
+      background: #7f8c8d;
+      transform: translateX(-3px);
+    }
+
+    .course-action-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+
+    .course-action-btn {
+      background: white;
+      border: none;
+      border-radius: 15px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      min-height: 100px;
+    }
+
+    .course-action-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .course-action-btn.video { border-left: 4px solid #e74c3c; }
+    .course-action-btn.document { border-left: 4px solid #3498db; }
+    .course-action-btn.assignment { border-left: 4px solid #f39c12; }
+    .course-action-btn.practice { border-left: 4px solid #9b59b6; }
+    .course-action-btn.session { border-left: 4px solid #1abc9c; }
+    .course-action-btn.details { border-left: 4px solid #34495e; }
+
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 25px;
+    }
+
+    .enrolled-course-item {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 25px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      border-left: 5px solid #3498db;
+    }
+
+    .enrolled-course-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .search-container {
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .search-input {
+      width: 100%;
+      max-width: 500px;
+      padding: 15px 25px;
+      border: none;
+      border-radius: 25px;
+      font-size: 1.1rem;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.95);
+      outline: none;
+    }
+
+    .search-input:focus {
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .content-area {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 30px;
+      margin-top: 20px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      min-height: 400px;
+    }
+
+    .profile-container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .course-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      border-left: 5px solid #9b59b6;
+    }
+
+    .course-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Progress bars */
+    .progress-bar {
+      background: #ecf0f1;
+      border-radius: 10px;
+      overflow: hidden;
+      height: 20px;
+      margin: 10px 0;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3498db, #2ecc71);
+      transition: width 0.5s ease;
+      border-radius: 10px;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .main-container {
+        padding: 20px 15px;
+      }
+      
+      .welcome-section h1 {
+        font-size: 2rem;
+      }
+      
+      .dashboard-buttons {
+        grid-template-columns: 1fr;
+      }
+      
+      .section-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+      
+      .course-action-buttons {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      }
+    }
+  </style>
 </body>
 </html>

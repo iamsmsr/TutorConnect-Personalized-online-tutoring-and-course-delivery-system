@@ -33,9 +33,33 @@ function showUsernameInNavbar() {
   }
 }
 
+// Function to update username display in course details and other pages
+function updateUsernameDisplay() {
+  const token = localStorage.getItem('jwt');
+  const usernameDisplay = document.getElementById('usernameDisplay');
+  
+  if (token && usernameDisplay) {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      console.log('JWT Payload:', payload); // Debug
+      const username = payload.username || payload.sub || 'Student';
+      // If the username is an email, extract just the part before @
+      const displayName = username.includes('@') ? username.split('@')[0] : username;
+      usernameDisplay.textContent = displayName;
+    } catch (e) {
+      console.error('JWT Parse Error:', e);
+      usernameDisplay.textContent = 'Student';
+    }
+  }
+}
+
 // Run when page loads
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', showUsernameInNavbar);
+  document.addEventListener('DOMContentLoaded', function() {
+    showUsernameInNavbar();
+    updateUsernameDisplay();
+  });
 } else {
   showUsernameInNavbar();
+  updateUsernameDisplay();
 }
