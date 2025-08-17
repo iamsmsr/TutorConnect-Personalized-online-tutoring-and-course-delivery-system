@@ -1,0 +1,228 @@
+id
+686818d1d3eb597650fd0daa
+venueName
+"Grand Convention Hall"
+address
+"123 Main Street, Gulshan|23.780573,90.414353"
+location
+"Dhaka"
+reviews
+Array (2)
+ratings
+4.25
+details
+""
+pictures
+Array (empty)
+currentBookings
+Object
+pastEvents
+Object
+tempEvent
+Object
+_class
+"com.event.event_management.venue.model.Venue"
+_id
+68681953d3eb597650fd0dab
+venueName
+"Royal Banquet"
+address
+"Plot 2, Road 54, Gulshan 2|23.7925,90.4078"
+location
+"Dhaka"
+reviews
+Array (2)
+ratings
+4.5
+details
+""
+pictures
+Array (empty)
+currentBookings
+Object
+pastEvents
+Object
+tempEvent
+Object
+_class
+"com.event.event_management.venue.model.Venue"
+_id
+6868196ed3eb597650fd0dac
+venueName
+"Sunset Event Center"
+address
+"House 10, Road 12, Banani|23.7936,90.4042"
+location
+"Dhaka"
+reviews
+Array (2)
+ratings
+3.9
+details
+""
+pictures
+Array (empty)
+currentBookings
+Object
+pastEvents
+Object
+tempEvent
+Object
+_id
+68681992d3eb597650fd0dad
+venueName
+"Emerald Palace"
+address
+"House 15, Road 8, Dhanmondi|23.7465,90.3760"
+location
+"Dhaka"
+reviews
+Array (2)
+ratings
+4.5
+details
+""
+pictures
+Array (empty)
+currentBookings
+Object
+pastEvents
+Object
+tempEvent
+Object
+_class
+"com.event.event_management.venue.model.Venue"
+_id
+686819a5d3eb597650fd0dae
+venueName
+"Diamond Plaza"
+address
+"Sector 4, Road 7, Uttara|23.8741,90.3984"
+location
+"Dhaka"
+reviews
+Array (2)
+ratings
+4
+details
+""
+pictures
+Array (empty)
+currentBookings
+Object
+pastEvents
+Object
+tempEvent
+Object
+_id
+686819c7d3eb597650fd0daf
+venueName
+"Pearl Garden"
+address
+"House 22, Avenue 3, Mirpur|23.8041,90.3667"
+location
+"Dhaka"
+reviews
+Array (2)
+ratings
+4.5
+details
+""
+pictures
+Array (empty)
+currentBookings
+Object
+pastEvents
+Object
+tempEvent
+Object
+_id
+686819dad3eb597650fd0db0
+venueName
+"Opal Conference Center"
+address
+"Tower 5, Motijheel Commercial Area|23.7324,90.4175"
+location
+"Dhaka"
+reviews
+Array (2)
+ratings
+4.2
+details
+""
+pictures
+Array (empty)
+currentBookings
+Object
+pastEvents
+Object
+tempEvent
+Object
+_id
+686819eed3eb597650fd0db1
+venueName
+"Crystal Ballroom"
+address
+"Block B, Bashundhara R/A|23.8198,90.4317"
+location
+"Dhaka"
+reviews
+Array (2)
+ratings
+4.8
+details
+""
+pictures
+Array (empty)
+currentBookings
+Object
+pastEvents
+Object
+tempEvent
+Object
+_class
+"com.event.event_management.venue.model.Venue"
+_id
+68681a05d3eb597650fd0db2
+venueName
+"Sapphire Hall"
+address
+"House 7, Road 2, Mohammadpur|23.7633,90.3580"
+location
+"Dhaka"
+reviews
+Array (2)
+ratings
+4.1
+details
+""
+pictures
+Array (empty)
+currentBookings
+Object
+pastEvents
+Object
+tempEvent
+Object
+_id
+68681a1ad3eb597650fd0db3
+venueName
+"Ruby Event Space"
+address
+"House 11, Road 6, Badda|23.7806,90.4266"
+location
+"Dhaka"
+reviews
+Array (2)
+ratings
+4.3
+details
+""
+pictures
+Array (empty)
+currentBookings
+Object
+pastEvents
+Object
+tempEvent
+Object
