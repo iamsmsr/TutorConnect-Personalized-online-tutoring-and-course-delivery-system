@@ -14,6 +14,45 @@ function initializeDashboard() {
 }
 
 function setupMainNavigation() {
+  // RAG Chatbot button
+  document.getElementById('ragChatbotBtn').addEventListener('click', function() {
+    const modal = document.getElementById('ragChatbotModal');
+    const loading = document.getElementById('ragChatbotLoading');
+    const iframe = document.getElementById('ragChatbotIframe');
+    modal.style.display = 'flex';
+    loading.style.display = 'flex';
+    iframe.style.display = 'none';
+    // Remove any previous error message
+    if (document.getElementById('ragChatbotError')) {
+      document.getElementById('ragChatbotError').remove();
+    }
+    // Listen for iframe load or error
+    iframe.onload = function() {
+      loading.style.display = 'none';
+      iframe.style.display = 'block';
+    };
+    iframe.onerror = function() {
+      loading.style.display = 'none';
+      iframe.style.display = 'none';
+      if (!document.getElementById('ragChatbotError')) {
+        const errorMsg = document.createElement('div');
+        errorMsg.id = 'ragChatbotError';
+        errorMsg.style = 'color:#c00; text-align:center; padding:24px; font-weight:600;';
+        errorMsg.textContent = 'Failed to load AI Chatbot. Please try again later.';
+        loading.parentNode.appendChild(errorMsg);
+      }
+    };
+    // Reload iframe src to trigger load each time
+    iframe.src = 'https://tutorconnect-ragchatbot.onrender.com';
+  });
+
+  // Close RAG Chatbot modal
+  document.getElementById('closeRagChatbotModal').addEventListener('click', function() {
+    document.getElementById('ragChatbotModal').style.display = 'none';
+    // Optionally reset iframe for next open
+    const iframe = document.getElementById('ragChatbotIframe');
+    iframe.src = '';
+  });
   // Continue Learning button
   document.getElementById('continueLearningBtn').addEventListener('click', function() {
     showSection('continueLearningSection');

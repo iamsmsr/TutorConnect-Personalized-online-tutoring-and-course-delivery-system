@@ -12,6 +12,9 @@
     <div class="navbar-buttons">
       <button class="register-btn">Register for free</button>
       <button class="login-btn">Log In</button>
+      <button id="ragChatbotBtnIndex" class="ai-chatbot-btn" style="background:#667eea; color:#fff; border:none; border-radius:20px; padding:10px 22px; font-weight:600; margin-left:12px; cursor:pointer; display:flex; align-items:center; gap:8px;">
+        <span style="font-size:1.3rem;">🤖</span> AI Chatbot
+      </button>
     </div>
   </nav>
   <header class="hero">
@@ -45,7 +48,63 @@
       </div>
     </div>
   </section>
+  <!-- RAG Chatbot Modal -->
+  <div id="ragChatbotModalIndex" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); z-index:2000; justify-content:center; align-items:center;">
+    <div style="background:#fff; border-radius:12px; box-shadow:0 4px 32px rgba(0,0,0,0.2); width:90vw; max-width:600px; height:80vh; display:flex; flex-direction:column;">
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 18px; background:#667eea; color:#fff; border-top-left-radius:12px; border-top-right-radius:12px;">
+        <span style="font-size:1.2rem; font-weight:600;">TutorConnect AI Chatbot</span>
+        <button id="closeRagChatbotModalIndex" style="background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer;">&times;</button>
+      </div>
+      <div id="ragChatbotLoadingIndex" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;">
+        <div class="loader" style="border:6px solid #eee; border-top:6px solid #667eea; border-radius:50%; width:48px; height:48px; animation: spin 1s linear infinite;"></div>
+        <span style="color:#667eea; font-weight:500;">Starting AI Chatbot... Please wait</span>
+      </div>
+      <iframe id="ragChatbotIframeIndex" src="https://tutorconnect-ragchatbot.onrender.com" style="flex:1; border:none; width:100%; height:100%; border-bottom-left-radius:12px; border-bottom-right-radius:12px; display:none;"></iframe>
+    </div>
+  </div>
+  <style>
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
   <script src="../js/index.js"></script>
   <script src="../js/show_username.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('ragChatbotBtnIndex').addEventListener('click', function() {
+        const modal = document.getElementById('ragChatbotModalIndex');
+        const loading = document.getElementById('ragChatbotLoadingIndex');
+        const iframe = document.getElementById('ragChatbotIframeIndex');
+        modal.style.display = 'flex';
+        loading.style.display = 'flex';
+        iframe.style.display = 'none';
+        if (document.getElementById('ragChatbotErrorIndex')) {
+          document.getElementById('ragChatbotErrorIndex').remove();
+        }
+        iframe.onload = function() {
+          loading.style.display = 'none';
+          iframe.style.display = 'block';
+        };
+        iframe.onerror = function() {
+          loading.style.display = 'none';
+          iframe.style.display = 'none';
+          if (!document.getElementById('ragChatbotErrorIndex')) {
+            const errorMsg = document.createElement('div');
+            errorMsg.id = 'ragChatbotErrorIndex';
+            errorMsg.style = 'color:#c00; text-align:center; padding:24px; font-weight:600;';
+            errorMsg.textContent = 'Failed to load AI Chatbot. Please try again later.';
+            loading.parentNode.appendChild(errorMsg);
+          }
+        };
+        iframe.src = 'https://tutorconnect-ragchatbot.onrender.com';
+      });
+      document.getElementById('closeRagChatbotModalIndex').addEventListener('click', function() {
+        document.getElementById('ragChatbotModalIndex').style.display = 'none';
+        const iframe = document.getElementById('ragChatbotIframeIndex');
+        iframe.src = '';
+      });
+    });
+  </script>
 </body>
 </html>
