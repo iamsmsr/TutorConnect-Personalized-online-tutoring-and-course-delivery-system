@@ -105,7 +105,7 @@ function loadAssignedCourses() {
   
   coursesList.innerHTML = '<p style="text-align: center; margin: 40px 0;">Loading courses...</p>';
   
-  fetch('http://localhost:8080/api/tutor/courses', {
+  fetch('https://tutorconnect-backend-0yki.onrender.com/api/tutor/courses', {
     headers: { 'Authorization': 'Bearer ' + token }
   })
     .then(res => {
@@ -201,7 +201,7 @@ function loadEditProfileForm() {
   if (!profileContainer) return;
   
   // First load the user's current profile data
-  fetch('http://localhost:8080/api/user/me', {
+  fetch('https://tutorconnect-backend-0yki.onrender.com/api/user/me', {
     headers: { 'Authorization': 'Bearer ' + token }
   })
     .then(res => {
@@ -274,7 +274,7 @@ function loadEditProfileForm() {
         }
         
         try {
-          const res = await fetch('http://localhost:8080/api/user/update-profile', {
+          const res = await fetch('https://tutorconnect-backend-0yki.onrender.com/api/user/update-profile', {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
@@ -341,7 +341,7 @@ function loadEnrolledStudents() {
   
   // Use the existing functionality but render in our modern interface
   const token = localStorage.getItem('jwt');
-  fetch('http://localhost:8080/api/tutor/courses', {
+  fetch('https://tutorconnect-backend-0yki.onrender.com/api/tutor/courses', {
     headers: { 'Authorization': 'Bearer ' + token }
   })
     .then(res => res.json())
@@ -407,7 +407,7 @@ function loadEditResources() {
   
   // Load the existing edit resources functionality but with modern styling
   const token = localStorage.getItem('jwt');
-  fetch('http://localhost:8080/api/tutor/courses', {
+  fetch('https://tutorconnect-backend-0yki.onrender.com/api/tutor/courses', {
     headers: { 'Authorization': 'Bearer ' + token }
   })
     .then(res => res.json())
@@ -506,7 +506,7 @@ function loadSessionRequests() {
   content.innerHTML = '<div style="text-align: center; margin: 40px 0;"><div class="spinner"></div><p>Loading session requests...</p></div>';
   
   const token = localStorage.getItem('jwt');
-  fetch(`http://localhost:8080/api/courses/${currentCourseId}/tutor-requests`, {
+  fetch(`https://tutorconnect-backend-0yki.onrender.com/api/courses/${currentCourseId}/tutor-requests`, {
     headers: { 'Authorization': 'Bearer ' + token }
   })
     .then(res => res.json())
@@ -620,7 +620,7 @@ function acceptSessionRequest(button) {
   if (commentInput && commentInput.value) requestBody.comment = commentInput.value;
   
   const token = localStorage.getItem('jwt');
-  fetch(`http://localhost:8080/api/courses/${courseId}/session-request/${requestId}/respond`, {
+  fetch(`https://tutorconnect-backend-0yki.onrender.com/api/courses/${courseId}/session-request/${requestId}/respond`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -659,7 +659,7 @@ function rejectSessionRequest(button) {
   if (commentInput && commentInput.value) requestBody.comment = commentInput.value;
   
   const token = localStorage.getItem('jwt');
-  fetch(`http://localhost:8080/api/courses/${courseId}/session-request/${requestId}/respond`, {
+  fetch(`https://tutorconnect-backend-0yki.onrender.com/api/courses/${courseId}/session-request/${requestId}/respond`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -708,7 +708,7 @@ function markAssignmentDone(checkbox) {
   const originalColor = checkbox.parentNode.style.color;
   checkbox.parentNode.style.color = '#3498db';
   
-  fetch(`http://localhost:8080/api/courses/${courseId}/students/${studentEmail}/assignments`, {
+  fetch(`https://tutorconnect-backend-0yki.onrender.com/api/courses/${courseId}/students/${studentEmail}/assignments`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -805,7 +805,7 @@ function submitResourceForm(event, courseId) {
   
   const resources = { video: videos, docs: docs, assignments: assignments, quizzes: quizzes };
   
-  fetch(`http://localhost:8080/api/tutor/courses/${courseId}/resources`, {
+  fetch(`https://tutorconnect-backend-0yki.onrender.com/api/tutor/courses/${courseId}/resources`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',

@@ -158,7 +158,7 @@ function loadEnrolledCourses() {
 
   document.getElementById('enrolledCoursesList').innerHTML = 'Loading...';
 
-  fetch('http://localhost:8080/api/courses/enrolled', {
+  fetch('https://tutorconnect-backend-0yki.onrender.com/api/courses/enrolled', {
     headers: { 'Authorization': 'Bearer ' + token }
   })
     .then(res => res.json())
@@ -245,7 +245,7 @@ function loadEnrolledCourses() {
 function selectCourse(courseId, courseTitle) {
   // Find the course data
   const token = localStorage.getItem('jwt');
-  fetch('http://localhost:8080/api/courses/enrolled', {
+  fetch('https://tutorconnect-backend-0yki.onrender.com/api/courses/enrolled', {
     headers: { 'Authorization': 'Bearer ' + token }
   })
     .then(res => res.json())
@@ -495,7 +495,7 @@ function makeSessionRequest(isExtra) {
   const token = localStorage.getItem('jwt');
   const endpoint = isExtra ? 'extra-session-request' : 'session-request';
   
-  fetch(`http://localhost:8080/api/courses/${currentCourse.id}/${endpoint}`, {
+  fetch(`https://tutorconnect-backend-0yki.onrender.com/api/courses/${currentCourse.id}/${endpoint}`, {
     method: 'POST',
     headers: {
       'Authorization': 'Bearer ' + token
@@ -517,7 +517,7 @@ function makeSessionRequest(isExtra) {
 
 function updateVideoProgress() {
   const token = localStorage.getItem('jwt');
-  fetch(`http://localhost:8080/api/courses/${currentCourse.id}/progress/video`, {
+  fetch(`https://tutorconnect-backend-0yki.onrender.com/api/courses/${currentCourse.id}/progress/video`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -568,7 +568,7 @@ function handleSearchInput(inputElem) {
     } catch {}
   }
 
-  fetch(`http://localhost:8080/api/courses/search?query=${encodeURIComponent(query)}`)
+  fetch(`https://tutorconnect-backend-0yki.onrender.com/api/courses/search?query=${encodeURIComponent(query)}`)
     .then(res => {
       if (!res.ok) {
         resultsDiv.innerHTML = `<p>Error: ${res.status} ${res.statusText}</p>`;
@@ -613,7 +613,7 @@ function handleSearchInput(inputElem) {
 
 function enrollInCourse(courseId) {
   const token = localStorage.getItem('jwt');
-  fetch(`http://localhost:8080/api/courses/${courseId}/enroll`, {
+  fetch(`https://tutorconnect-backend-0yki.onrender.com/api/courses/${courseId}/enroll`, {
     method: 'POST',
     headers: {
       'Authorization': 'Bearer ' + token
@@ -639,7 +639,7 @@ function loadUserProfile() {
   const token = localStorage.getItem('jwt');
   if (!token) return;
 
-  fetch('http://localhost:8080/api/user/me', {
+  fetch('https://tutorconnect-backend-0yki.onrender.com/api/user/me', {
     headers: { 'Authorization': 'Bearer ' + token }
   })
     .then(res => {
@@ -740,7 +740,7 @@ function showEditProfileForm() {
           updates.password = form.password.value;
         }
 
-        const res = await fetch('http://localhost:8080/api/user/update-profile', {
+        const res = await fetch('https://tutorconnect-backend-0yki.onrender.com/api/user/update-profile', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -784,7 +784,7 @@ async function loadCertificates() {
 
   try {
     // Get enrolled courses
-    const enrolledResponse = await fetch('http://localhost:8080/api/courses/enrolled', {
+    const enrolledResponse = await fetch('https://tutorconnect-backend-0yki.onrender.com/api/courses/enrolled', {
       headers: {
         'Authorization': 'Bearer ' + token
       }
@@ -928,7 +928,7 @@ async function viewCertificate(courseId, courseTitle, tutorName) {
   
   try {
     // Get user profile for certificate
-    const userResponse = await fetch('http://localhost:8080/api/user/me', {
+    const userResponse = await fetch('https://tutorconnect-backend-0yki.onrender.com/api/user/me', {
       headers: {
         'Authorization': 'Bearer ' + token
       }
@@ -995,7 +995,7 @@ function downloadCertificate(courseId, courseTitle, tutorName) {
     return;
   }
   
-  fetch('http://localhost:8080/api/user/me', {
+  fetch('https://tutorconnect-backend-0yki.onrender.com/api/user/me', {
     headers: {
       'Authorization': 'Bearer ' + token
     }

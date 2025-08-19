@@ -27,6 +27,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/tutor/**").hasRole("TUTOR")
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/health").permitAll()
                 .requestMatchers("/api/courses/search").permitAll()
                 .requestMatchers("/api/courses/*").permitAll()
                 .requestMatchers("/api/ratings/course/**").permitAll()
