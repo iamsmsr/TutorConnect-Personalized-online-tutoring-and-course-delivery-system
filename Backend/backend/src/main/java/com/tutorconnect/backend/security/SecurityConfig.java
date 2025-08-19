@@ -49,7 +49,7 @@ public class SecurityConfig {
             "http://localhost:5500", 
             "http://127.0.0.1:3000", 
             "http://localhost:3000",
-            "https://tutorconnect2-ac76wtuac-saidurs-projects-ac4e4d20.vercel.app"
+            "https://tutorconnect-frontend.onrender.com"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
