@@ -137,6 +137,11 @@ function waitForBackendHealth() {
   fetch('https://tutorconnect-backend-0yki.onrender.com/api/health')
     .then(res => res.ok ? res.text() : Promise.reject())
     .then(() => {
+      // Hide the loading overlay
+      const overlay = document.getElementById('healthLoadingOverlay');
+      if (overlay) {
+        overlay.style.display = 'none';
+      }
       runMainFrontend();
     })
     .catch(() => {
