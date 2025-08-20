@@ -1,3 +1,4 @@
+// API_BASE is provided by js/config.js
 
 // signup.js
 
@@ -9,7 +10,7 @@ document.getElementById('signupForm').addEventListener('submit', function(e) {
     email: form.email.value,
     passwordHash: form.password.value
   };
-  fetch('http://localhost:8080/api/auth/signup', {
+  fetch(`${API_BASE}/api/auth/signup`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)

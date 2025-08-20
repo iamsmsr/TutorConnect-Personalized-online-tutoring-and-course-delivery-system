@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Practice Quiz - TutorConnect</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: white;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .course-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+    }
+
+    .nav-brand h3 {
+      color: #333;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .logout-btn {
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 12px 24px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+      font-size: 14px;
+    }
+
+    .logout-btn:hover {
+      background: #0056b3;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+    }
+
+    .main-container {
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .quiz-container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px;
+      margin: 20px auto;
+      max-width: 800px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .quiz-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    .quiz-header h2 {
+      color: white;
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+    
+    .quiz-header p {
+      color: rgba(255,255,255,0.9);
+      font-size: 1.1rem;
+    }
+    
+    .settings-modal, .quiz-content, .result-content {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 30px;
+      margin: 20px 0;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #333;
+    }
+    
+    .settings-modal h3, .result-content h3 {
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+    }
+    
+    .settings-modal p, .result-content p {
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+    
+    .form-group {
+      margin-bottom: 25px;
+    }
+    
+    .form-group label {
+      color: #333;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.9);
+      color: #333;
+      font-size: 16px;
+      border: 2px solid rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+      box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+    }
+    
+    .form-group input::placeholder {
+      color: rgba(51, 51, 51, 0.7);
+    }
+    
+    .quiz-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 15px;
+      padding: 18px 40px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      display: block;
+      margin: 30px auto 0;
+    }
+    
+    .quiz-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+    
+    .question-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 25px;
+      margin: 20px 0;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #333;
+    }
+    
+    .question-text {
+      color: #333;
+      font-size: 1.3rem;
+      margin-bottom: 25px;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+    
+    .option {
+      background: rgba(240, 240, 240, 0.9);
+      border: 2px solid rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      padding: 18px;
+      margin: 12px 0;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1.1rem;
+    }
+    
+    .option:hover {
+      background: rgba(255, 255, 255, 0.9);
+      border-color: #667eea;
+      transform: translateX(5px);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+    }
+    
+    .option.selected {
+      background: rgba(103, 126, 234, 0.2);
+      border-color: #667eea;
+      box-shadow: 0 4px 15px rgba(103, 126, 234, 0.3);
+      color: #333;
+      font-weight: 600;
+    }
+    
+    .timer {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      padding: 15px 25px;
+      color: #333;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 1.2rem;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .progress-bar {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 10px;
+      height: 10px;
+      margin-bottom: 25px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .progress-fill {
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+    
+    .back-btn {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+    
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    #settingsError {
+      color: #ff6b6b;
+      margin-top: 20px;
+      font-weight: 600;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+
+    .quiz-result-item {
+      background: rgba(240, 240, 240, 0.9);
+      border-radius: 10px;
+      padding: 15px;
+      margin: 15px 0;
+      border-left: 4px solid #667eea;
+    }
+
+    .quiz-result-item h4 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+
+    .quiz-result-item .correct {
+      color: #28a745;
+      font-weight: 600;
+    }
+
+    .quiz-result-item .incorrect {
+      color: #dc3545;
+      font-weight: 600;
+    }
+
+    .quiz-result-item .answer-text {
+      color: #555;
+      margin: 5px 0;
+    }
+
+    .final-score {
+      background: linear-gradient(135deg, #28a745, #20c997);
+      color: white;
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin: 20px 0;
+    }
+
+    .submit-btn, .next-btn, #submitQuizBtn {
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 15px 30px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+      margin: 10px 5px;
+    }
+
+    .submit-btn:hover, .next-btn:hover, #submitQuizBtn:hover {
+      background: #218838;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+    }
+
+    #quizArea, #resultArea {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 30px;
+      margin: 20px 0;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #333;
+    }
+
+    #quizArea h3, #resultArea h3 {
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+    }
+
+    #quizArea p, #resultArea p {
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Navigation Bar -->
+  <div class="top-nav">
+    <div class="nav-brand">
+      <img src="css/tutorconnect-logo.png" alt="TutorConnect Logo" class="course-logo">
+      <h3>TutorConnect</h3>
+    </div>
+    <button onclick="window.location.href='student_dashboard.html'" class="logout-btn">🏠 Dashboard</button>
+  </div>
+
+  <div class="main-container">
+    <div class="quiz-container">
+      <div class="quiz-header">
+        <h2>🧠 Practice Quiz</h2>
+        <p>Test your knowledge and improve your skills</p>
+      </div>
+
+      <div id="quizSettings" class="settings-modal">
+        <div class="form-group">
+          <label for="numQuestions">📊 Number of Questions:</label>
+          <input type="number" id="numQuestions" min="1" value="3" placeholder="Enter number of questions">
+        </div>
+        <div class="form-group">
+          <label for="timeLimit">⏰ Time Limit (minutes):</label>
+          <input type="number" id="timeLimit" min="1" value="10" placeholder="Enter time limit">
+        </div>
+        <button id="startQuizBtn" class="quiz-btn">🚀 Start Quiz</button>
+        <div id="settingsError"></div>
+      </div>
+
+      <div id="quizArea" style="display:none;">
+        <!-- Quiz questions will be dynamically inserted here -->
+      </div>
+
+      <div id="resultArea" style="display:none;">
+        <!-- Quiz results will be displayed here -->
+      </div>
+    </div>
+  </div>
+
+  <script src="js/quiz.js"></script>
+</body>
+</html>

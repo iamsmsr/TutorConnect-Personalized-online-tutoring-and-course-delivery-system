@@ -1,4 +1,5 @@
 // login.js
+// API_BASE is provided by js/config.js
 
 document.getElementById('loginForm').addEventListener('submit', function(e) {
   e.preventDefault();
@@ -7,7 +8,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     email: form.email.value,
     password: form.password.value
   };
-  fetch('http://localhost:8080/api/auth/login', {
+  fetch(`${API_BASE}/api/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)

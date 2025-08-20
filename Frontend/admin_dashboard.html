@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - TutorConnect</title>
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/admin_dashboard.css">
+</head>
+<body>
+  <!-- Top Navigation Bar -->
+  <div class="top-nav">
+    <div class="nav-brand">
+      <img src="css/tutorconnect-logo.png" alt="TutorConnect Logo" class="course-logo">
+      <h3>TutorConnect</h3>
+    </div>
+    <button id="logoutBtn" class="logout-btn">🚪 Log Out</button>
+  </div>
+
+  <div class="main-container">
+    <!-- Main Dashboard -->
+    <div id="mainDashboard">
+      <div class="welcome-section">
+        <h1>Welcome Back, Admin! 👑</h1>
+        <p>Your administrative control panel awaits</p>
+      </div>
+      <div class="dashboard-buttons">
+        <button id="createUserBtn" class="dashboard-btn primary">
+          <span class="btn-icon">➕</span>
+          <span class="btn-text">Create User/Tutor</span>
+        </button>
+        <button id="editTutorBtn" class="dashboard-btn secondary">
+          <span class="btn-icon">✏️</span>
+          <span class="btn-text">Edit Tutor Profile</span>
+        </button>
+        <button id="manageCourseBtn" class="dashboard-btn tertiary">
+          <span class="btn-icon">📚</span>
+          <span class="btn-text">Manage Courses</span>
+        </button>
+        <button id="siteSettingsBtn" class="dashboard-btn quaternary">
+          <span class="btn-icon">⚙️</span>
+          <span class="btn-text">Site Settings</span>
+        </button>
+        <button id="chatBtn" class="dashboard-btn fifth">
+          <span class="btn-icon">💬</span>
+          <span class="btn-text">Chat</span>
+        </button>
+        <button id="searchTutorsBtn" class="dashboard-btn sixth">
+          <span class="btn-icon">🔍</span>
+          <span class="btn-text">Search/Edit Tutors</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Create User Section -->
+    <div id="createUserSection" style="display:none;">
+      <div class="section-header">
+        <h2>➕ Create User/Tutor</h2>
+        <button id="backToMainFromCreateBtn" class="back-btn">← Back to Dashboard</button>
+      </div>
+      <div class="admin-container">
+        <div id="adminForms"></div>
+        <div id="result" style="text-align:center;margin-top:20px;"></div>
+      </div>
+    </div>
+
+    <!-- Edit Tutor Section -->
+    <div id="editTutorSection" style="display:none;">
+      <div class="section-header">
+        <h2>✏️ Edit Tutor Profile</h2>
+        <button id="backToMainFromEditBtn" class="back-btn">← Back to Dashboard</button>
+      </div>
+      <div class="admin-container">
+        <div id="editTutorForms"></div>
+        <div id="editTutorResult" style="text-align:center;margin-top:20px;"></div>
+      </div>
+    </div>
+
+    <!-- Manage Courses Section -->
+    <div id="manageCourseSection" style="display:none;">
+      <div class="section-header">
+        <h2>📚 Manage Courses</h2>
+        <button id="backToMainFromCourseBtn" class="back-btn">← Back to Dashboard</button>
+      </div>
+      <div class="admin-container">
+        <div id="courseForms"></div>
+        <div id="courseResult" style="text-align:center;margin-top:20px;"></div>
+      </div>
+    </div>
+
+    <!-- Site Settings Section -->
+    <div id="siteSettingsSection" style="display:none;">
+      <div class="section-header">
+        <h2>⚙️ Site Settings</h2>
+        <button id="backToMainFromSettingsBtn" class="back-btn">← Back to Dashboard</button>
+      </div>
+      <div class="admin-container">
+        <div class="settings-grid">
+          <div class="setting-item">
+            <h3>🌐 General Settings</h3>
+            <p>Configure site-wide settings and preferences</p>
+            <button class="btn">Configure</button>
+          </div>
+          <div class="setting-item">
+            <h3>👥 User Management</h3>
+            <p>Manage user roles and permissions</p>
+            <button class="btn">Manage</button>
+          </div>
+          <div class="setting-item">
+            <h3>📊 Analytics</h3>
+            <p>View site analytics and statistics</p>
+            <button class="btn">View Analytics</button>
+          </div>
+          <div class="setting-item">
+            <h3>🔧 System Settings</h3>
+            <p>Configure system parameters</p>
+            <button class="btn">Configure</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search Tutors Section -->
+    <div id="searchTutorsSection" style="display:none;">
+      <div class="section-header">
+        <h2>🔍 Search/Edit Tutors</h2>
+        <button id="backToMainFromSearchBtn" class="back-btn">← Back to Dashboard</button>
+      </div>
+      <div class="admin-container">
+        <div id="searchTutorForms"></div>
+        <div id="searchTutorResult" style="text-align:center;margin-top:20px;"></div>
+      </div>
+    </div>
+  </div>
+
+   
+  
+  <script src="js/config.js"></script>
+  <script src="js/admin_dashboard.js"></script>
+  <script src="js/show_username.js"></script>
+</body>
+</html>

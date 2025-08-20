@@ -1,6 +1,6 @@
 console.log('TutorConnect real-time chat script loaded');
 
-const API_BASE = 'http://localhost:8080';
+// API_BASE is provided by js/config.js
 let currentUserId = null;
 let currentUserEmail = null;
 let currentChatId = null;

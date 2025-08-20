@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TutorConnect - Real-Time Chat</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            color: #333;
+            font-size: 24px;
+            flex: 1;
+            text-align: center;
+        }
+        
+        .status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .chat-container {
+            flex: 1;
+            display: flex;
+            max-width: 1200px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .chat-list {
+            width: 300px;
+            background: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-list-header {
+            padding: 20px;
+            background: #495057;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .chat-tabs {
+            display: flex;
+            background: #6c757d;
+            border-radius: 0;
+        }
+        
+        .chat-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            background: #6c757d;
+            color: #adb5bd;
+            border: none;
+            transition: all 0.3s;
+        }
+        
+        .chat-tab.active {
+            background: #495057;
+            color: white;
+        }
+        
+        .chat-tab:hover {
+            background: #5a6268;
+            color: white;
+        }
+        
+        .create-group-btn {
+            margin-top: 10px;
+            width: 100%;
+            padding: 8px 12px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .create-group-btn:hover {
+            background: #218838;
+        }
+        
+        .chat-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid #dee2e6;
+            transition: background-color 0.2s;
+        }
+        
+        .chat-item:hover {
+            background: #e9ecef;
+        }
+        
+        .chat-item.active {
+            background: #007bff;
+            color: white;
+        }
+        
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-header {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        .messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: white;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .message.own {
+            flex-direction: row-reverse;
+        }
+        
+        .message-content {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+        
+        .message.own .message-content {
+            background: #007bff;
+            color: white;
+            margin-left: 50px;
+        }
+        
+        .message:not(.own) .message-content {
+            background: #f1f3f4;
+            color: #333;
+            margin-right: 50px;
+        }
+        
+        .message-info {
+            font-size: 11px;
+            opacity: 0.6;
+            margin: 5px 15px 0;
+        }
+        
+        .input-area {
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .message-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ced4da;
+            border-radius: 25px;
+            outline: none;
+            font-size: 14px;
+        }
+        
+        .send-btn {
+            padding: 12px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .send-btn:hover {
+            background: #0056b3;
+        }
+        
+        .send-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .welcome {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #6c757d;
+            font-size: 18px;
+        }
+
+        /* Group Chat Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .form-group textarea {
+            height: 80px;
+            resize: vertical;
+        }
+
+        .participants-list {
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 10px;
+            background: #f8f9fa;
+        }
+
+        .participant-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            margin: 4px 0;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+        }
+
+        .participant-remove {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn-cancel, .btn-create {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-create {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background: #5a6268;
+        }
+
+        .btn-create:hover {
+            background: #0056b3;
+        }
+
+        .group-indicator {
+            background: #28a745;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <button id="backToDashboardBtn" 
+                    style="background: #28a745; color: white; border: none; border-radius: 6px; padding: 8px 16px; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                🏠 Dashboard
+            </button>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center;">
+            <h1>💬 TutorConnect Chat</h1>
+            <div id="currentUserInfo" style="font-size: 14px; color: #666; margin-top: -5px; display: none;">
+                Welcome, <span id="currentUserName">Loading...</span>
+            </div>
+        </div>
+        <div id="connectionStatus" class="status disconnected">Disconnected</div>
+    </div>
+    
+    <div class="chat-container">
+        <div class="chat-list">
+            <div class="chat-list-header">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>Your Chats</span>
+                    <button id="createGroupBtn" class="create-group-btn">+ Group</button>
+                </div>
+                
+                <div class="chat-tabs">
+                    <button id="individualTab" class="chat-tab active">Individual</button>
+                    <button id="groupTab" class="chat-tab">Groups</button>
+                </div>
+                
+                <input id="userSearchInput" type="text" placeholder="Search users by name or email..." 
+                       style="margin-top: 10px; padding: 8px 12px; border-radius: 20px; border: 1px solid #ccc; font-size: 14px; width: 100%; box-sizing: border-box; background: white;">
+            </div>
+            <div id="userSearchResults" style="display: none; border-bottom: 1px solid #dee2e6;"></div>
+            <div id="chatList"></div>
+        </div>
+        
+        <div class="chat-main">
+            <div id="chatHeader" class="chat-header">Select a chat to start messaging</div>
+            <div id="messages" class="messages">
+                <div class="welcome">Select a chat from the left to start real-time messaging between tutors and students</div>
+            </div>
+            <div id="inputArea" class="input-area" style="display: none;">
+                <input type="text" id="messageInput" class="message-input" placeholder="Type a message...">
+                <button id="sendBtn" class="send-btn">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Group Chat Creation Modal -->
+    <div id="groupChatModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Create Group Chat</div>
+            
+            <form id="groupChatForm">
+                <div class="form-group">
+                    <label for="groupName">Group Name *</label>
+                    <input type="text" id="groupName" required placeholder="Enter group name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="groupDescription">Description</label>
+                    <textarea id="groupDescription" placeholder="Enter group description (optional)"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="participantSearch">Add Participants</label>
+                    <input type="text" id="participantSearch" placeholder="Search users by name or email...">
+                    <div id="participantSearchResults" style="margin-top: 10px;"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Selected Participants</label>
+                    <div id="selectedParticipants" class="participants-list">
+                        <div style="text-align: center; color: #666; padding: 20px;">No participants selected</div>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeGroupChatModal()">Cancel</button>
+                    <button type="submit" class="btn-create">Create Group</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/realtimechat.js"></script>
+</body>
+</html>

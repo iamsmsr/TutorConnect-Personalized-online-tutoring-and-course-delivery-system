@@ -27,6 +27,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/tutor/**").hasRole("TUTOR")
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/health").permitAll()
                 .requestMatchers("/api/courses/search").permitAll()
                 .requestMatchers("/api/courses/*").permitAll()
                 .requestMatchers("/api/ratings/course/**").permitAll()
@@ -47,7 +48,8 @@ public class SecurityConfig {
             "http://127.0.0.1:5500", 
             "http://localhost:5500", 
             "http://127.0.0.1:3000", 
-            "http://localhost:3000"
+            "http://localhost:3000",
+            "https://tutorconnect-frontend.onrender.com"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));

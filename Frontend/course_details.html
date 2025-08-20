@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Course Details - TutorConnect</title>
+  <link rel="stylesheet" href="css/course_details.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-content">
+      <div class="logo-container">
+        <img src="css/tutorconnect-logo.png" alt="TutorConnect Logo" class="course-logo">
+        <h1 class="site-title">TutorConnect</h1>
+      </div>
+      <div class="user-info">
+        <span class="user-greeting">Welcome, <span id="usernameDisplay">Student</span>!</span>
+        <a href="student_dashboard.html" class="dashboard-btn">🏠 Dashboard</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="main-container">
+    <div id="courseDetails" class="course-details-container">
+      <!-- Course details will be loaded here -->
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/course_details.js"></script>
+  <script src="js/show_username.js"></script>
+</body>
+</html>

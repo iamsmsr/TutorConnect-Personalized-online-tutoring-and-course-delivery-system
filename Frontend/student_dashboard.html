@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard - TutorConnect</title>
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/student_dashboard.css">
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script src="js/config.js"></script>
+</head>
+<body>
+  <!-- Top Navigation Bar -->
+  <div class="top-nav">
+    <div class="nav-brand">
+      <img src="css/tutorconnect-logo.png" alt="TutorConnect Logo" class="course-logo">
+      <h3>TutorConnect</h3>
+    </div>
+    <button id="logoutBtn" class="logout-btn">🚪 Log Out</button>
+  </div>
+
+  <div class="main-container">
+    <!-- Main Dashboard -->
+    <div id="mainDashboard">
+      <div class="welcome-section">
+        <h1>Welcome Back, Student! 🎓</h1>
+        <p>Your personalized learning dashboard awaits</p>
+      </div>
+      <div class="dashboard-buttons">
+        <button id="continueLearningBtn" class="dashboard-btn primary">
+          <span class="btn-icon">📚</span>
+          <span class="btn-text">Continue Learning</span>
+        </button>
+        <button id="browseCoursesBtn" class="dashboard-btn secondary">
+          <span class="btn-icon">🔍</span>
+          <span class="btn-text">Browse Courses</span>
+        </button>
+        <button id="certificatesBtn" class="dashboard-btn certificate">
+          <span class="btn-icon">🏆</span>
+          <span class="btn-text">Certificates</span>
+        </button>
+        <button id="editProfileBtn" class="dashboard-btn tertiary">
+          <span class="btn-icon">👤</span>
+          <span class="btn-text">Edit Profile</span>
+        </button>
+        <button id="chatBtn" class="dashboard-btn quaternary">
+          <span class="btn-icon">💬</span>
+          <span class="btn-text">Chat</span>
+        </button>
+        <button id="ragChatbotBtn" class="dashboard-btn ai">
+          <span class="btn-icon">🤖</span>
+          <span class="btn-text">AI Chatbot</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Continue Learning Section -->
+    <div id="continueLearningSection" style="display:none;">
+      <div class="section-header">
+        <h2>📚 My Enrolled Courses</h2>
+        <button id="backToMainBtn" class="back-btn">← Back to Dashboard</button>
+      </div>
+      <div id="enrolledCoursesList" class="courses-grid">Loading...</div>
+    </div>
+
+    <!-- Individual Course View -->
+    <div id="courseViewSection" style="display:none;">
+      <!-- Course Title and Back Button -->
+      <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <h2 id="courseTitle" style="color: white; font-size: 1.8rem; margin: 0;"></h2>
+        <button id="backToCoursesBtn" class="back-btn">← Back to Courses</button>
+      </div>
+      
+      <div class="course-action-buttons">
+        <button id="videoBtn" class="course-action-btn video">
+          <span class="btn-icon">📹</span>
+          <span>Videos</span>
+        </button>
+        <button id="documentBtn" class="course-action-btn document">
+          <span class="btn-icon">📄</span>
+          <span>Documents</span>
+        </button>
+        <button id="assignmentBtn" class="course-action-btn assignment">
+          <span class="btn-icon">📝</span>
+          <span>Assignments</span>
+        </button>
+        <button id="practiceBtn" class="course-action-btn practice">
+          <span class="btn-icon">🧠</span>
+          <span>Practice</span>
+        </button>
+        <button id="requestSessionBtn" class="course-action-btn session">
+          <span class="btn-icon">👨‍🏫</span>
+          <span>Request Session</span>
+        </button>
+        <button id="courseDetailsBtn" class="course-action-btn details">
+          <span class="btn-icon">ℹ️</span>
+          <span>Course Details</span>
+        </button>
+      </div>
+      <div id="courseContentArea" class="content-area"></div>
+    </div>
+
+    <!-- Browse Courses Section -->
+    <div id="browseCoursesSection" style="display:none;">
+      <div class="section-header">
+        <h2>🔍 Browse Courses</h2>
+        <button id="backToMainFromBrowseBtn" class="back-btn">← Back to Dashboard</button>
+      </div>
+      <div class="search-container">
+        <input type="text" id="studentSearchBar" class="search-input" placeholder="🔍 Search our courses...">
+      </div>
+      <div id="studentSearchResults" class="courses-grid"></div>
+    </div>
+
+    <!-- Certificates Section -->
+    <div id="certificatesSection" style="display:none;">
+      <div class="section-header">
+        <h2>🏆 My Certificates</h2>
+        <button id="backToMainFromCertificatesBtn" class="back-btn">← Back to Dashboard</button>
+      </div>
+      <div id="certificatesList" class="courses-grid">Loading certificates...</div>
+    </div>
+
+    <!-- Edit Profile Section -->
+    <div id="editProfileSection" style="display:none;">
+      <div class="section-header">
+        <h2>👤 Edit Profile</h2>
+        <button id="backToMainFromProfileBtn" class="back-btn">← Back to Dashboard</button>
+      </div>
+      <div id="profileEditContainer" class="profile-container"></div>
+    </div>
+
+    <!-- RAG Chatbot Modal -->
+    <div id="ragChatbotModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); z-index:2000; justify-content:center; align-items:center;">
+      <div style="background:#fff; border-radius:12px; box-shadow:0 4px 32px rgba(0,0,0,0.2); width:90vw; max-width:600px; height:80vh; display:flex; flex-direction:column;">
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 18px; background:#667eea; color:#fff; border-top-left-radius:12px; border-top-right-radius:12px;">
+          <span style="font-size:1.2rem; font-weight:600;">TutorConnect AI Chatbot</span>
+          <button id="closeRagChatbotModal" style="background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer;">&times;</button>
+        </div>
+        <div id="ragChatbotLoading" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;">
+          <div class="loader" style="border:6px solid #eee; border-top:6px solid #667eea; border-radius:50%; width:48px; height:48px; animation: spin 1s linear infinite;"></div>
+          <span style="color:#667eea; font-weight:500;">Starting AI Chatbot... Please wait</span>
+        </div>
+        <iframe id="ragChatbotIframe" src="https://tutorconnect-ragchatbot.onrender.com" style="flex:1; border:none; width:100%; height:100%; border-bottom-left-radius:12px; border-bottom-right-radius:12px; display:none;"></iframe>
+      </div>
+    </div>
+    </div>
+  </div>
+  
+  <script src="js/student_dashboard.js"></script>
+  <script src="js/show_username.js"></script>
+ </body>
+ </html>

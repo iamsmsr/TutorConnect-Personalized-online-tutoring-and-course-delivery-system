@@ -645,7 +645,7 @@
           };
           
           try {
-            const res = await fetch('http://localhost:8080/api/admin/create-user', {
+            const res = await fetch('https://tutorconnect-backend-0yki.onrender.com/api/admin/create-user', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -725,7 +725,7 @@
               languages: [],
               availability: ''
             };
-            const res = await fetch('http://localhost:8080/api/admin/edit-tutor/' + form.id.value, {
+            const res = await fetch('https://tutorconnect-backend-0yki.onrender.com/api/admin/edit-tutor/' + form.id.value, {
               method: 'PUT',
               headers: {
                 'Content-Type': 'application/json',
@@ -887,8 +887,8 @@
     async function fetchAndDisplayTutors(type, query) {
       const token = localStorage.getItem('jwt');
       let url = '';
-      if(type === 'all') url = 'http://localhost:8080/api/admin/tutors';
-      else url = 'http://localhost:8080/api/admin/search-tutor?query=' + encodeURIComponent(query);
+      if(type === 'all') url = 'https://tutorconnect-backend-0yki.onrender.com/api/admin/tutors';
+      else url = 'https://tutorconnect-backend-0yki.onrender.com/api/admin/search-tutor?query=' + encodeURIComponent(query);
       const res = await fetch(url, {
         headers: { 'Authorization': 'Bearer ' + token }
       });
@@ -945,7 +945,7 @@
           languages: form.languages.value.split(',').map(l => l.trim()),
           availability: form.availability.value
         };
-        const res = await fetch('http://localhost:8080/api/admin/edit-tutor/' + form.id.value, {
+        const res = await fetch('https://tutorconnect-backend-0yki.onrender.com/api/admin/edit-tutor/' + form.id.value, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -974,8 +974,8 @@
     async function fetchAndDisplayCourses(type, query) {
       const token = localStorage.getItem('jwt');
       let url = '';
-      if(type === 'all') url = 'http://localhost:8080/api/admin/courses';
-      else url = 'http://localhost:8080/api/admin/search-course?query=' + encodeURIComponent(query);
+      if(type === 'all') url = 'https://tutorconnect-backend-0yki.onrender.com/api/admin/courses';
+      else url = 'https://tutorconnect-backend-0yki.onrender.com/api/admin/search-course?query=' + encodeURIComponent(query);
       const res = await fetch(url, {
         headers: { 'Authorization': 'Bearer ' + token }
       });
@@ -1029,7 +1029,7 @@
           description: form.description.value,
           tutorId: form.tutorId.value
         };
-        const res = await fetch('http://localhost:8080/api/admin/create-course', {
+        const res = await fetch('https://tutorconnect-backend-0yki.onrender.com/api/admin/create-course', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1085,7 +1085,7 @@
           description: form.description.value,
           tutorId: form.tutorId.value
         };
-        const res = await fetch('http://localhost:8080/api/admin/edit-course/' + form.id.value, {
+        const res = await fetch('https://tutorconnect-backend-0yki.onrender.com/api/admin/edit-course/' + form.id.value, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
