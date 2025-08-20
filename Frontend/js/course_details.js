@@ -1,3 +1,4 @@
+// API_BASE is provided by js/config.js
 // Handles loading and displaying course details, and enroll button
 function getQueryParam(param) {
   const urlParams = new URLSearchParams(window.location.search);
@@ -79,7 +80,7 @@ function renderCourseDetails(course) {
       }
       enrollBtn.disabled = true;
       enrollBtn.textContent = 'Enrolling...';
-      fetch(`https://tutorconnect-backend-0yki.onrender.com/api/courses/${courseId}/enroll`, {
+      fetch(`${API_BASE}/api/courses/${courseId}/enroll`, {
         method: 'POST',
         headers: {
           'Authorization': 'Bearer ' + token
@@ -111,7 +112,7 @@ function renderStars(avg) {
 }
 
 function fetchAverageRating() {
-  fetch(`https://tutorconnect-backend-0yki.onrender.com/api/ratings/course/${courseId}/average`)
+  fetch(`${API_BASE}/api/ratings/course/${courseId}/average`)
     .then(res => res.json())
     .then(avg => {
       document.getElementById('averageRating').innerHTML = `<strong>Average Rating:</strong> ${renderStars(avg)} (${avg.toFixed(2)})`;
@@ -122,7 +123,7 @@ function fetchAverageRating() {
 }
 
 function fetchRatingsList() {
-  fetch(`https://tutorconnect-backend-0yki.onrender.com/api/ratings/course/${courseId}`)
+  fetch(`${API_BASE}/api/ratings/course/${courseId}`)
     .then(res => res.json())
     .then(ratings => {
       if (!ratings || ratings.length === 0) {
@@ -154,7 +155,7 @@ function setupRatingForm() {
       document.getElementById('ratingError').textContent = 'You must be logged in as a student to submit a rating.';
       return;
     }
-    fetch('https://tutorconnect-backend-0yki.onrender.com/api/ratings', {
+    fetch(`${API_BASE}/api/ratings`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -179,7 +180,7 @@ function setupRatingForm() {
 }
 
 if (courseId) {
-  fetch(`https://tutorconnect-backend-0yki.onrender.com/api/courses/${courseId}`)
+  fetch(`${API_BASE}/api/courses/${courseId}`)
     .then(res => res.json())
     .then(course => {
       renderCourseDetails(course);

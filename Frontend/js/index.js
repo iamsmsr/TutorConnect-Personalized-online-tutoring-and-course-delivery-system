@@ -1,3 +1,4 @@
+// API_BASE is provided by js/config.js
 
 
 // Health check before running main logic
@@ -24,7 +25,7 @@ function runMainFrontend() {
         isStudent = role === 'STUDENT' || (Array.isArray(role) && role.includes('STUDENT'));
       } catch {}
     }
-    fetch(`https://tutorconnect-backend-0yki.onrender.com/api/courses/search?query=${encodeURIComponent(query)}`)
+    fetch(`${API_BASE}/api/courses/search?query=${encodeURIComponent(query)}`)
       .then(res => {
         if (!res.ok) {
           resultsDiv.innerHTML = `<p>Error: ${res.status} ${res.statusText}</p>`;
@@ -71,7 +72,7 @@ function runMainFrontend() {
             }
             btn.disabled = true;
             btn.textContent = 'Enrolling...';
-            fetch(`https://tutorconnect-backend-0yki.onrender.com/api/courses/${courseId}/enroll`, {
+            fetch(`${API_BASE}/api/courses/${courseId}/enroll`, {
               method: 'POST',
               headers: {
                 'Authorization': 'Bearer ' + token
@@ -134,7 +135,7 @@ function runMainFrontend() {
 
 // Wait for backend health before running main logic
 function waitForBackendHealth() {
-  fetch('https://tutorconnect-backend-0yki.onrender.com/api/health')
+  fetch(`${API_BASE}/api/health`)
     .then(res => res.ok ? res.text() : Promise.reject())
     .then(() => {
       // Hide the loading overlay

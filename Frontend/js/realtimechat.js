@@ -1,6 +1,6 @@
 console.log('TutorConnect real-time chat script loaded');
 
-const API_BASE = 'https://tutorconnect-backend-0yki.onrender.com';
+// API_BASE is provided by js/config.js
 let currentUserId = null;
 let currentUserEmail = null;
 let currentChatId = null;
