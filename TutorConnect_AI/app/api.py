@@ -7,6 +7,8 @@ from app.rag import answer_question, USER_PROMPT, settings, groq_client
 from nomic import embed
 from fastapi.middleware.cors import CORSMiddleware
 import os
+from app.plagiarism_ai_config import PLAGIARISM_CHECKER_URL, AI_CONTENT_DETECTION_URL, HEADERS
+import requests
 
 app = FastAPI()
 vector_store = VectorStore()
@@ -141,7 +143,15 @@ async def ask_tutor_module_specific(req: TutorModuleTaskRequest):
     module_file = f"{req.module_name.lower()}.json"
     
     try:
+        print(f"DEBUG - Attempting to load module file: {module_file}")
         vector_store.load(module_file)
+        print(f"DEBUG - Successfully loaded {module_file}")
+        print(f"DEBUG - Vector store contains {len(vector_store.store)} items")
+        
+        # Check if store is empty
+        if not vector_store.store:
+            print(f"DEBUG - Vector store is empty for {module_file}")
+            return {"answer": f"The '{req.module_name}' module file is empty or contains no data. Please check the file content."}
         
         # Embed the user's message/question
         embed_res = embed.text(
@@ -151,7 +161,9 @@ async def ask_tutor_module_specific(req: TutorModuleTaskRequest):
             inference_mode=settings.NOMIC_INFERENCE_MODE
         )
         query_vector = embed_res['embeddings'][0]
+        print(f"DEBUG - About to query vector store with {len(query_vector)} dimensional vector")
         chunks = vector_store.query(query_vector)[:3]
+        print(f"DEBUG - Found {len(chunks)} chunks from query")
         context = '\n\n---\n\n'.join([chunk['text'] for chunk in chunks]) + '\n\n---'
         
         messages=[
@@ -164,9 +176,12 @@ async def ask_tutor_module_specific(req: TutorModuleTaskRequest):
         return {"answer": chat_completion.choices[0].message.content}
     
     except FileNotFoundError:
+        print(f"DEBUG - File not found: {module_file}")
         return {"answer": f"Sorry, I don't have specific information about the '{req.module_name}' module. The module file '{module_file}' was not found. Please check the module name or use the general module info instead."}
     except Exception as e:
-        return {"answer": "Sorry, there was an error retrieving module-specific information. Please try again later."}
+        print(f"DEBUG - Exception occurred: {type(e).__name__}: {e}")
+        print(f"DEBUG - Module file: {module_file}")
+        return {"answer": f"Sorry, there was an error retrieving module-specific information: {str(e)}. Please try again later."}
 
 @app.post("/ask-homepage")
 async def ask_homepage_question(req: HomepageQuestionRequest):
@@ -212,3 +227,15 @@ async def ask_homepage_question(req: HomepageQuestionRequest):
     response = chat_completion.choices[0].message.content
     print(f"DEBUG - LLM Response: {response}")
     return {"answer": response}
+
+@app.post("/ai-content-detection")
+async def ai_content_detection(request: Request):
+    body = await request.json()
+    response = requests.post(AI_CONTENT_DETECTION_URL, headers=HEADERS, json=body)
+    return response.json()
+
+@app.post("/plagiarism-check")
+async def plagiarism_check(request: Request):
+    body = await request.json()
+    response = requests.post(PLAGIARISM_CHECKER_URL, headers=HEADERS, json=body)
+    return response.json()

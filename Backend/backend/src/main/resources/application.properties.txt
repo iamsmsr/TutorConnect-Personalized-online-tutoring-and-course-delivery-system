@@ -1,0 +1,5 @@
+spring.application.name=backend
+server.port=8080
+
+
+spring.data.mongodb.uri=mongodb+srv://smsr:smsr2025@cluster0.kf0ayjp.mongodb.net/tutor_connect?retryWrites=true&w=majority&appName=Cluster0
