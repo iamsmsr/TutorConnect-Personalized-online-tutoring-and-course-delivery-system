@@ -32,6 +32,16 @@ class VectorStore:
         with open(file_path, 'r') as f:
             self.store = json.load(f)
     
+    def load_from_json(self, json_content):
+        """
+        Load vector store directly from JSON content (dict or list).
+        This is used when the JSON content comes from the database or API.
+        """
+        if isinstance(json_content, (dict, list)):
+            self.store = json_content if isinstance(json_content, list) else [json_content]
+        else:
+            raise ValueError("json_content must be a dict or list")
+    
     def query(self, vector, top_k=10):
         vectors = [item['vector'] for item in self.store]
         similarities = cosine_similarity(vector, vectors)

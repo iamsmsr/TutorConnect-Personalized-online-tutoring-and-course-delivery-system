@@ -237,6 +237,56 @@
             border-top: 2px solid #007bff;
             margin: 15px 0;
         }
+
+        /* New styles for module section */
+        .module-section {
+            margin-top: 40px;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #e3e8ee;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .module-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+            color: #333;
+        }
+
+        .module-section .form-group {
+            margin-bottom: 16px;
+        }
+
+        .module-section label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .module-section select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #b6c2d9;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #f7fafd;
+        }
+
+        .module-section button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .module-section button:hover {
+            background: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -253,6 +303,7 @@
                 <option value="make-assignment">Make Assignment</option>
                 <option value="evaluate-question">Evaluate Question</option>
                 <option value="ai-plagiarism-checker">AI and Plagiarism Checker</option>
+                <option value="add-module">Add Module</option>
                 <!-- Future options like "Add Question" or "Evaluate" can be added here -->
             </select>
         </div>
@@ -365,6 +416,18 @@
                 <button id="close-modal-btn" style="margin-top: 10px; padding: 10px 20px; background: #007bff; color: #fff; border: none; border-radius: 8px; cursor: pointer;">Close</button>
             </div>
         </div>
+
+        <!-- Section for selecting JSON files from the database -->
+        <section class="module-section">
+            <h2>Select JSON File from Database</h2>
+            <div class="form-group">
+                <label for="dbJsonFiles">Select a JSON File:</label>
+                <select id="dbJsonFiles">
+                    <option value="">-- Select a file --</option>
+                </select>
+            </div>
+            <button id="loadDbJson" disabled>Load JSON</button>
+        </section>
     </div>
     <script>
         const actionSelect = document.getElementById('action-select');
@@ -493,6 +556,8 @@
                 evaluateQuestionSection.style.display = 'block';
             } else if (selectedAction === 'ai-plagiarism-checker') {
                 aiPlagiarismSection.style.display = 'block';
+            } else if (selectedAction === 'add-module') {
+                window.location.href = '/module';
             }
         });
 
@@ -530,10 +595,12 @@
 
         makeAssignmentBtn.addEventListener('click', () => {
             const moduleName = moduleNameInput.value.trim();
+            const selectedFileId = dbJsonFilesDropdown.value;
             const message = previewContent.textContent;
 
-            if (!moduleName) {
-                alert('Please enter a module name.');
+            // Check if at least one input is provided
+            if (!moduleName && !selectedFileId) {
+                alert('Please provide a module name or select a JSON file from the database.');
                 return;
             }
 
@@ -1028,10 +1095,13 @@
                         closeBtn.style.color = 'white';
                         closeBtn.style.border = 'none';
                         closeBtn.style.borderRadius = '50%';
-                        closeBtn.style.width = '30px';
-                        closeBtn.style.height = '30px';
+                        closeBtn.style.width = '35px';
+                        closeBtn.style.height = '35px';
                         closeBtn.style.fontSize = '18px';
                         closeBtn.style.cursor = 'pointer';
+                        closeBtn.style.display = 'flex';
+                        closeBtn.style.alignItems = 'center';
+                        closeBtn.style.justifyContent = 'center';
                         closeBtn.addEventListener('click', () => {
                             previewPanel.remove();
                         });
@@ -1091,7 +1161,7 @@
                         editBtn.style.borderRadius = '50%';
                         editBtn.style.width = '30px';
                         editBtn.style.height = '30px';
-                        editBtn.style.fontSize = '14px';
+                        editBtn.style.fontSize = '18px';
                         editBtn.style.cursor = 'pointer';
                         editBtn.addEventListener('click', arguments.callee.bind(this));
                         previewPanel.appendChild(editBtn);
@@ -1216,10 +1286,13 @@
             e.preventDefault();
             const message = chatInput.value.trim();
             const moduleName = moduleNameInput.value.trim();
+            const selectedFileId = dbJsonFilesDropdown.value;
 
             if (!message) return;
-            if (!moduleName) {
-                alert('Please enter a module name.');
+            
+            // Check if at least one input is provided
+            if (!moduleName && !selectedFileId) {
+                alert('Please provide a module name or select a JSON file from the database.');
                 return;
             }
 
@@ -1230,20 +1303,44 @@
             addChatButtons(userMessage);
 
             try {
-                const res = await fetch('/ask-tutor-module', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ module_name: moduleName, message })
-                });
-                const data = await res.json();
+                let response, data;
+                
+                if (selectedFileId) {
+                    // If a JSON file is selected, fetch its content and use /process-module
+                    const moduleResponse = await fetch(`/get-module/${selectedFileId}`);
+                    const jsonContent = await moduleResponse.json();
+                    
+                    if (moduleResponse.ok) {
+                        response = await fetch('/process-module', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ 
+                                json_content: jsonContent,
+                                query: message // Add the user's message as query
+                            })
+                        });
+                    } else {
+                        throw new Error('Failed to load selected JSON file');
+                    }
+                } else {
+                    // If only module name is provided, use /ask-tutor-module
+                    response = await fetch('/ask-tutor-module', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ module_name: moduleName, message })
+                    });
+                }
+                
+                data = await response.json();
                 const botMessage = document.createElement('p');
                 botMessage.textContent = `Bot: ${data.answer}`;
                 botMessage.classList.add('bot-message');
                 chat.appendChild(botMessage);
                 addChatButtons(botMessage);
             } catch (err) {
+                console.error('Error:', err);
                 const errorMessage = document.createElement('p');
-                errorMessage.textContent = 'Bot: Error retrieving response.';
+                errorMessage.textContent = `Bot: Error retrieving response: ${err.message}`;
                 errorMessage.classList.add('bot-message');
                 chat.appendChild(errorMessage);
                 addChatButtons(errorMessage);
@@ -1396,6 +1493,61 @@
                 console.error(error);
             }
         });
+
+        // Fetch JSON files from the database and populate the dropdown
+        async function fetchDbJsonFiles() {
+            const dbJsonFilesDropdown = document.getElementById('dbJsonFiles');
+            try {
+                const response = await fetch('/get-modules');
+                const modules = await response.json();
+
+                if (response.ok) {
+                    modules.forEach(module => {
+                        if (module.file_type === 'json_upload') {
+                            const option = document.createElement('option');
+                            option.value = module._id;
+                            option.textContent = module.filename;
+                            dbJsonFilesDropdown.appendChild(option);
+                        }
+                    });
+                } else {
+                    console.error('Error fetching modules:', modules.detail);
+                }
+            } catch (error) {
+                console.error('Error fetching modules:', error);
+            }
+        }
+
+        // Enable the "Load JSON" button when a file is selected
+        const dbJsonFilesDropdown = document.getElementById('dbJsonFiles');
+        const loadDbJsonButton = document.getElementById('loadDbJson');
+
+        dbJsonFilesDropdown.addEventListener('change', () => {
+            loadDbJsonButton.disabled = !dbJsonFilesDropdown.value;
+        });
+
+        // Fetch and send the selected JSON file to the RAG system
+        loadDbJsonButton.addEventListener('click', async () => {
+            const selectedFileId = dbJsonFilesDropdown.value;
+            if (!selectedFileId) return;
+
+            try {
+                const response = await fetch(`/get-module/${selectedFileId}`);
+                const jsonContent = await response.json();
+
+                if (response.ok) {
+                    console.log('Loaded JSON content:', jsonContent);
+                    // Add logic to send the JSON content to the RAG system
+                } else {
+                    console.error('Error loading JSON content:', jsonContent.detail);
+                }
+            } catch (error) {
+                console.error('Error loading JSON content:', error);
+            }
+        });
+
+        // Initialize the dropdown with database JSON files
+        fetchDbJsonFiles();
     </script>
 </body>
 </html>
