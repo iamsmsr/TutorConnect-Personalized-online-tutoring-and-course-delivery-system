@@ -45,7 +45,7 @@ function setupMainNavigation() {
       }
     };
     // Reload iframe src to trigger load each time
-    iframe.src = 'https://tutorconnect-ragchatbot.onrender.com';
+    iframe.src = 'https://tutorconnect-ragchatbot.onrender.com/student';
   });
 
   // Close RAG Chatbot modal
