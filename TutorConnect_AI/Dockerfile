@@ -1,4 +1,4 @@
-# Use official Python image
+#sudo docker run -d -p 10000:10000 tutorconnect-frontend # Use official Python image
 FROM python:3.11-slim
 
 # Set work directory
@@ -12,6 +12,15 @@ RUN pip install poetry
 
 # Install dependencies
 RUN poetry install --no-interaction --no-ansi
+
+# Install additional packages using Poetry
+RUN poetry add fastapi uvicorn motor python-multipart pymongo
+
+# Download NLTK data
+RUN poetry run python -c "import nltk; nltk.download('punkt')"
+
+# Run the load-docs command to process PDFs
+#RUN poetry run load-docs
 
 # Expose port
 EXPOSE 10000

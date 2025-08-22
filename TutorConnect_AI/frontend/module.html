@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module Management</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #007bff;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #b6c2d9;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        .form-group textarea {
+            resize: vertical;
+        }
+        .upload-section, .module-section, .module-display-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .upload-section h2, .module-section h2, .module-display-section h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        .upload-section input[type="file"] {
+            padding: 8px;
+            border: 1px solid #007bff;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        #uploadStatus {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        #uploadStatus.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        #uploadStatus.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        button {
+            padding: 12px 24px;
+            border: none;
+            background: #007bff;
+            color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Module Management</h1>
+        
+        <!-- JSON File Upload Section -->
+        <section class="upload-section">
+            <h2>Upload JSON File to Database</h2>
+            <form id="uploadForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="jsonFile">Select JSON File:</label>
+                    <input type="file" id="jsonFile" accept=".json" required>
+                </div>
+                <button type="submit">Upload to Database</button>
+            </form>
+            <div id="uploadStatus"></div>
+        </section>
+
+        <!-- PDF File Upload Section -->
+        <section class="upload-section">
+            <h2>Upload PDF File to Database</h2>
+            <form id="uploadPdfForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="pdfFile">Select PDF File:</label>
+                    <input type="file" id="pdfFile" accept=".pdf" required>
+                </div>
+                <button type="submit">Upload PDF</button>
+            </form>
+            <div id="pdfUploadStatus"></div>
+        </section>
+
+        <!-- Module Info Section -->
+        <section class="module-section">
+            <h2>Module Information</h2>
+            <form id="moduleForm">
+                <div class="form-group">
+                    <label for="moduleName">Module Name</label>
+                    <input type="text" id="moduleName" placeholder="Enter module name">
+                </div>
+                <div class="form-group">
+                    <label for="moduleDescription">Module Description</label>
+                    <textarea id="moduleDescription" placeholder="Enter module description"></textarea>
+                </div>
+                <button type="submit">Save Module</button>
+            </form>
+        </section>
+
+        <!-- Display and Download Modules Section -->
+        <section class="module-display-section">
+            <h2>View and Download Modules</h2>
+            <button id="fetchModules">Fetch All Modules</button>
+            <div id="modulesList" style="margin-top: 20px;">
+                <!-- Modules will be displayed here -->
+            </div>
+        </section>
+    </div>
+    
+    <script>
+        // Handle JSON file upload
+        document.getElementById('uploadForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const fileInput = document.getElementById('jsonFile');
+            const file = fileInput.files[0];
+            const statusDiv = document.getElementById('uploadStatus');
+
+            if (!file) {
+                showStatus('Please select a JSON file.', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                showStatus('Uploading file to database...', 'info');
+                
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showStatus(`Success! ${result.message} (${result.data_count} records inserted)`, 'success');
+                    fileInput.value = ''; // Clear the file input
+                } else {
+                    showStatus(`Error: ${result.detail}`, 'error');
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                showStatus('An error occurred while uploading the file.', 'error');
+            }
+        });
+
+        // Handle PDF file upload
+        const uploadPdfForm = document.getElementById('uploadPdfForm');
+        const pdfUploadStatus = document.getElementById('pdfUploadStatus');
+
+        uploadPdfForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const fileInput = document.getElementById('pdfFile');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                pdfUploadStatus.textContent = 'Please select a PDF file.';
+                pdfUploadStatus.style.color = 'red';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                pdfUploadStatus.textContent = 'Uploading PDF...';
+                pdfUploadStatus.style.color = 'blue';
+
+                const response = await fetch('/upload-pdf', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    pdfUploadStatus.textContent = result.message;
+                    pdfUploadStatus.style.color = 'green';
+                } else {
+                    pdfUploadStatus.textContent = `Error: ${result.detail}`;
+                    pdfUploadStatus.style.color = 'red';
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                pdfUploadStatus.textContent = 'An error occurred while uploading the PDF.';
+                pdfUploadStatus.style.color = 'red';
+            }
+        });
+
+        // Handle module form submission
+        document.getElementById('moduleForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const moduleName = document.getElementById('moduleName').value.trim();
+            const moduleDescription = document.getElementById('moduleDescription').value.trim();
+
+            if (!moduleName) {
+                alert('Please enter a module name.');
+                return;
+            }
+
+            // Here you can add logic to save module info
+            alert(`Module "${moduleName}" saved successfully!`);
+            
+            // Clear the form
+            document.getElementById('moduleName').value = '';
+            document.getElementById('moduleDescription').value = '';
+        });
+
+        // Show status messages
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('uploadStatus');
+            statusDiv.textContent = message;
+            statusDiv.className = type;
+            
+            if (type === 'info') {
+                statusDiv.style.backgroundColor = '#cce7ff';
+                statusDiv.style.color = '#004085';
+                statusDiv.style.border = '1px solid #b3d7ff';
+                statusDiv.style.display = 'block';
+            }
+        }
+
+        // Fetch and display modules with individual download buttons
+        document.getElementById('fetchModules').addEventListener('click', async () => {
+            const modulesList = document.getElementById('modulesList');
+            modulesList.innerHTML = 'Fetching modules...';
+
+            try {
+                const response = await fetch('/get-modules');
+                const modules = await response.json();
+
+                if (response.ok) {
+                    if (modules.length === 0) {
+                        modulesList.innerHTML = 'No modules found in the database.';
+                    } else {
+                        modulesList.innerHTML = '<ul>' + modules.map(module => `
+                            <li>
+                                ${module.filename}
+                                <button onclick="downloadModule('${module._id}', '${module.filename}')">Download</button>
+                            </li>
+                        `).join('') + '</ul>';
+                    }
+                } else {
+                    modulesList.innerHTML = `Error: ${modules.detail}`;
+                }
+            } catch (error) {
+                console.error('Error fetching modules:', error);
+                modulesList.innerHTML = 'An error occurred while fetching modules.';
+            }
+        });
+
+        // Download individual module
+        async function downloadModule(moduleId, filename) {
+            try {
+                const response = await fetch(`/get-module/${moduleId}`);
+                const module = await response.json();
+
+                if (response.ok) {
+                    const blob = new Blob([JSON.stringify(module, null, 2)], { type: 'application/json' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = filename;
+                    link.click();
+                } else {
+                    alert(`Error: ${module.detail}`);
+                }
+            } catch (error) {
+                console.error('Error downloading module:', error);
+                alert('An error occurred while downloading the module.');
+            }
+        }
+    </script>
+</body>
+</html>

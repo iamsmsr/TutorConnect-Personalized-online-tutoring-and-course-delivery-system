@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TutorConnect Student Chatbot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+        body { background: #f7fafd; font-family: 'Segoe UI', Arial, sans-serif; }
+        #chat-container { max-width: 600px; margin: 40px auto; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #e3e8ee; padding: 24px; }
+        #chat { height: 320px; overflow-y: auto; border: 1px solid #e3e8ee; border-radius: 8px; padding: 12px; background: #f9fbfc; margin-bottom: 18px; }
+        .bot { color: #007bff; margin-bottom: 10px; }
+        .user { color: #333; margin-bottom: 10px; text-align: right; }
+        #input-row { display: flex; gap: 8px; }
+        #question-input { flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #b6c2d9; }
+        #send-btn { background: #007bff; color: #fff; border: none; border-radius: 6px; padding: 10px 18px; font-weight: 500; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <h2 style="color:#007bff;">Student Chatbot</h2>
+        <div id="chat"></div>
+        <div id="input-row">
+            <input type="text" id="question-input" placeholder="Dont use it for cheating, ask general questions only..." />
+            <button id="send-btn">Send</button>
+        </div>
+    </div>
+    <script>
+        const chat = document.getElementById('chat');
+        const questionInput = document.getElementById('question-input');
+        const sendBtn = document.getElementById('send-btn');
+
+        function appendMessage(sender, text) {
+            const div = document.createElement('div');
+            div.className = sender;
+            div.innerHTML = (sender === 'bot' ? 'Bot:<br>' : 'You:<br>') + text.replace(/\n/g, '<br>');
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        async function sendQuestion() {
+            const question = questionInput.value.trim();
+            if (!question) return;
+            appendMessage('user', question);
+            questionInput.value = '';
+            const res = await fetch('/ask', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question })
+            });
+            const data = await res.json();
+            appendMessage('bot', data.answer);
+        }
+
+        sendBtn.addEventListener('click', sendQuestion);
+        questionInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter') sendQuestion();
+        });
+    </script>
+</body>
+</html>

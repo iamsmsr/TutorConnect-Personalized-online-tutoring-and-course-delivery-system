@@ -17,7 +17,7 @@ from app.vector_store import VectorStore
 # {question}
 # """
 SYSTEM_PROMPT = (
-    "You are an assistant that answers user questions about TutorConnect courses, their details, tutors, ratings, and reviews. "
+    "You are an assistant that answers user questions about TutorConnect courses, their details, tutors, ratings, revies, you can make questions from each of the courses contect"
     "You support both English and Bangla queries. "
     "Always reply in concise bullet points or numbered lists, and keep answers as short as possible unless the user asks for details. "
     "If the query is in Bangla, reply in Bangla. "
@@ -50,7 +50,7 @@ def answer_question(question, vector_store):
     query_vector = embed_res['embeddings'][0]
 
     # Find the most relevant chunks in our vector store using semantic search
-    chunks = vector_store.query(query_vector)
+    chunks = vector_store.query(query_vector)[:3]
 
     # Prepare the context and prompt, and generate an answer with the LLM
     context = '\n\n---\n\n'.join([chunk['text'] for chunk in chunks]) + '\n\n---'

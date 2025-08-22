@@ -21,8 +21,26 @@ class VectorStore:
             json.dump(self.store, f)
 
     def load(self, file_path=VECTOR_STORE_FILEPATH):
+        """
+        Load vector store from a given file path (default: VECTOR_STORE_FILEPATH).
+        If only a filename is provided, search in the data/ directory.
+        Usage: vector_store.load() or vector_store.load('courses.json')
+        """
+        import os
+        if not os.path.isabs(file_path) and not file_path.startswith('data/'):
+            file_path = os.path.join('data', file_path)
         with open(file_path, 'r') as f:
             self.store = json.load(f)
+    
+    def load_from_json(self, json_content):
+        """
+        Load vector store directly from JSON content (dict or list).
+        This is used when the JSON content comes from the database or API.
+        """
+        if isinstance(json_content, (dict, list)):
+            self.store = json_content if isinstance(json_content, list) else [json_content]
+        else:
+            raise ValueError("json_content must be a dict or list")
     
     def query(self, vector, top_k=10):
         vectors = [item['vector'] for item in self.store]
