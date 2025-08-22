@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TutorConnect - Assignment Tool</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+            margin: 0;
+            padding: 0;
+        }
+        /* Adjustments for a single-column layout */
+        .container {
+            max-width: 700px; /* Reverted to single-column layout */
+            margin: 40px auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        h2 {
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 24px;
+            letter-spacing: 1px;
+        }
+        .dropdown {
+            margin-bottom: 20px;
+        }
+        .dropdown select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #b6c2d9;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #f7fafd;
+        }
+        .section {
+            display: none;
+            margin-top: 20px;
+        }
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .input-group label {
+            flex: 1 1 100%;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        .input-group input, .input-group select, .input-group textarea {
+            flex: 1 1 calc(50% - 16px);
+            padding: 10px;
+            border: 1px solid #b6c2d9;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #f7fafd;
+        }
+        .input-group textarea {
+            flex: 1 1 100%;
+            resize: none;
+        }
+        .preview-box, #chat {
+            margin-top: 20px;
+            background: #f7fafd;
+            border: 1px solid #e3e8ee;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        #chat {
+            height: 250px;
+            overflow-y: auto;
+        }
+        button {
+            padding: 12px 24px;
+            border: none;
+            background: linear-gradient(90deg, #007bff 0%, #0056b3 100%);
+            color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: linear-gradient(90deg, #0056b3 0%, #007bff 100%);
+        }
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+        }
+        /* Adjustments for layout and chat box */
+        #chat-form {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        #chat-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #b6c2d9;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #f7fafd;
+        }
+        #chat-form button {
+            padding: 10px 20px;
+            font-size: 1rem;
+        }
+        /* Adjustments for chat alignment */
+        #chat p {
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 70%;
+        }
+        #chat .user-message {
+            background-color: #007bff;
+            color: white;
+            align-self: flex-end;
+            text-align: right;
+        }
+        #chat .bot-message {
+            background-color: #f1f1f1;
+            color: #333;
+            align-self: flex-start;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>TutorConnect</h2>
+        <div class="input-group">
+            <label for="module-name">Module Name</label>
+            <input type="text" id="module-name" placeholder="e.g., Math, Physics, Chemistry" />
+        </div>
+        <div class="dropdown">
+            <label for="action-select">Select Action:</label>
+            <select id="action-select">
+                <option value="" disabled selected>Choose an action...</option>
+                <option value="make-assignment">Make Assignment</option>
+                <option value="evaluate-question">Evaluate Question</option>
+                <!-- Future options like "Add Question" or "Evaluate" can be added here -->
+            </select>
+        </div>
+
+        <div id="make-assignment-section" class="section">
+            <h3>Make Assignment</h3>
+            <div class="input-group">
+                <label for="assignment-name">Assignment Name</label>
+                <input type="text" id="assignment-name" placeholder="Enter assignment name" />
+
+                <label for="question-type">Question Type</label>
+                <input type="text" id="question-type" placeholder="e.g., Short, Brief, Scenario-based" />
+            </div>
+            <div class="input-group">
+                <label for="num-questions">Number of Questions</label>
+                <input type="number" id="num-questions" placeholder="Enter number of questions" min="1" />
+            </div>
+            <div class="input-group">
+                <label for="marks">Marks</label>
+                <input type="number" id="marks" placeholder="Enter marks" min="1" />
+
+                <label for="response-length">Response Length</label>
+                <select id="response-length">
+                    <option value="Short">Short</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Large">Large</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>
+                    <input type="checkbox" id="provide-solution" /> Provide Solution
+                </label>
+                <label>
+                    <input type="checkbox" id="provide-rubric" /> Provide Rubric
+                </label>
+            </div>
+            <div class="button-group">
+                <button id="make-assignment-btn">Make Assignment</button>
+                <button id="fill-to-chat-btn" style="display:none;">Fill to Chat</button>
+            </div>
+        </div>
+
+        <div id="evaluate-question-section" class="section">
+            <h3>Evaluate Question</h3>
+            <div class="input-group">
+                <label for="evaluation-question">Question</label>
+                <textarea id="evaluation-question" placeholder="Enter the question to evaluate"></textarea>
+
+                <label for="evaluation-answer">Answer</label>
+                <textarea id="evaluation-answer" placeholder="Enter the answer to evaluate"></textarea>
+            </div>
+            <div class="input-group">
+                <label for="evaluation-solution">Solution</label>
+                <textarea id="evaluation-solution" placeholder="Enter the solution (optional)"></textarea>
+
+                <label for="evaluation-rubric">Rubric</label>
+                <textarea id="evaluation-rubric" placeholder="Enter the rubric (optional)"></textarea>
+            </div>
+            <div class="input-group">
+                <label>
+                    <input type="checkbox" id="include-feedback" /> Include Feedback
+                </label>
+                <label for="evaluation-response-size">Response Size</label>
+                <select id="evaluation-response-size">
+                    <option value="Short">Short</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Large">Large</option>
+                </select>
+            </div>
+            <div class="button-group">
+                <button id="evaluate-question-btn">Evaluate Question</button>
+            </div>
+        </div>
+
+        <div class="preview-box" id="preview-box">
+            <h3>Preview</h3>
+            <p id="preview-content">Fill in the details and click "Make Assignment" to preview.</p>
+        </div>
+        <div id="chat" class="preview-box">
+            <h3>Chat</h3>
+        </div>
+        <form id="chat-form">
+            <input type="text" id="chat-input" placeholder="Type your message here..." />
+            <button type="submit">Send</button>
+        </form>
+    </div>
+    <script>
+        const actionSelect = document.getElementById('action-select');
+        const makeAssignmentSection = document.getElementById('make-assignment-section');
+        const evaluateQuestionSection = document.getElementById('evaluate-question-section');
+        const moduleNameInput = document.getElementById('module-name');
+        const assignmentNameInput = document.getElementById('assignment-name');
+        const questionTypeInput = document.getElementById('question-type');
+        const marksInput = document.getElementById('marks');
+        const provideSolutionCheckbox = document.getElementById('provide-solution');
+        const provideRubricCheckbox = document.getElementById('provide-rubric');
+        const responseLengthInput = document.getElementById('response-length');
+        const makeAssignmentBtn = document.getElementById('make-assignment-btn');
+        const previewBox = document.getElementById('preview-box');
+        const previewContent = document.getElementById('preview-content');
+        const fillToChatBtn = document.getElementById('fill-to-chat-btn');
+        const chatInput = document.getElementById('chat-input');
+        const chatForm = document.getElementById('chat-form');
+        const chat = document.getElementById('chat');
+
+        actionSelect.addEventListener('change', () => {
+            const selectedAction = actionSelect.value;
+            makeAssignmentSection.style.display = 'none';
+            const evaluateQuestionSection = document.getElementById('evaluate-question-section');
+            if (evaluateQuestionSection) evaluateQuestionSection.style.display = 'none';
+
+            if (selectedAction === 'make-assignment') {
+                makeAssignmentSection.style.display = 'block';
+            } else if (selectedAction === 'evaluate-question') {
+                evaluateQuestionSection.style.display = 'block';
+            }
+        });
+
+        function updatePreview() {
+            const moduleName = moduleNameInput.value.trim();
+            const assignmentName = assignmentNameInput.value.trim();
+            const questionType = questionTypeInput.value;
+            const numQuestions = document.getElementById('num-questions').value.trim();
+            const marks = marksInput.value.trim();
+            const provideSolution = provideSolutionCheckbox.checked;
+            const provideRubric = provideRubricCheckbox.checked;
+            const responseLength = responseLengthInput.value;
+
+            let preview = '';
+            if (moduleName) preview += `Assignment for Module: ${moduleName} `;
+            if (assignmentName) preview += `Name: ${assignmentName} `;
+            if (questionType) preview += `Question Type: ${questionType} `;
+            if (numQuestions) preview += `Number of Questions: ${numQuestions} `;
+            if (marks) preview += `Marks: ${marks} `;
+            if (responseLength) preview += `Response Length: ${responseLength} `;
+            if (provideSolution) preview += `Include Solution `;
+            if (provideRubric) preview += `Include Rubric`;
+
+            previewContent.textContent = preview;
+        }
+
+        moduleNameInput.addEventListener('input', updatePreview);
+        assignmentNameInput.addEventListener('input', updatePreview);
+        questionTypeInput.addEventListener('input', updatePreview);
+        document.getElementById('num-questions').addEventListener('input', updatePreview);
+        marksInput.addEventListener('input', updatePreview);
+        provideSolutionCheckbox.addEventListener('change', updatePreview);
+        provideRubricCheckbox.addEventListener('change', updatePreview);
+        responseLengthInput.addEventListener('change', updatePreview);
+
+        makeAssignmentBtn.addEventListener('click', () => {
+            const moduleName = moduleNameInput.value.trim();
+            const message = previewContent.textContent;
+
+            if (!moduleName) {
+                alert('Please enter a module name.');
+                return;
+            }
+
+            chatInput.value = message; // Fill the chat input with the preview content
+            fillToChatBtn.style.display = 'none';
+        });
+
+        fillToChatBtn.addEventListener('click', () => {
+            chatInput.value = previewContent.textContent;
+            fillToChatBtn.style.display = 'none';
+        });
+
+        // Add copy and auto-pass buttons to each chat message
+        function addChatButtons(messageElement) {
+            const textContainer = document.createElement('span');
+            textContainer.textContent = messageElement.textContent;
+            messageElement.textContent = ''; // Clear existing text
+            messageElement.appendChild(textContainer);
+
+            const buttonGroup = document.createElement('div');
+            buttonGroup.style.display = 'flex';
+            buttonGroup.style.gap = '8px';
+            buttonGroup.style.marginLeft = '8px';
+
+            const copyButton = document.createElement('button');
+            copyButton.textContent = 'Copy';
+            copyButton.style.padding = '4px 8px';
+            copyButton.style.fontSize = '0.8rem';
+            copyButton.style.flexShrink = '0';
+            copyButton.addEventListener('click', () => {
+                navigator.clipboard.writeText(textContainer.textContent.replace(/^You: |^Bot: /, ''));
+                alert('Message copied to clipboard!');
+            });
+
+            const autoPassButton = document.createElement('button');
+            autoPassButton.textContent = 'Auto-Pass';
+            autoPassButton.style.padding = '4px 8px';
+            autoPassButton.style.fontSize = '0.8rem';
+            autoPassButton.style.flexShrink = '0';
+            autoPassButton.addEventListener('click', () => {
+                chatInput.value = textContainer.textContent.replace(/^You: |^Bot: /, '');
+            });
+
+            buttonGroup.appendChild(copyButton);
+            buttonGroup.appendChild(autoPassButton);
+            messageElement.appendChild(buttonGroup);
+        }
+
+        // Modify chat message appending to include buttons
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const message = chatInput.value.trim();
+            const moduleName = moduleNameInput.value.trim();
+
+            if (!message) return;
+            if (!moduleName) {
+                alert('Please enter a module name.');
+                return;
+            }
+
+            const userMessage = document.createElement('p');
+            userMessage.textContent = `You: ${message}`;
+            userMessage.classList.add('user-message');
+            chat.appendChild(userMessage);
+            addChatButtons(userMessage);
+
+            try {
+                const res = await fetch('/ask-tutor-module', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ module_name: moduleName, message })
+                });
+                const data = await res.json();
+                const botMessage = document.createElement('p');
+                botMessage.textContent = `Bot: ${data.answer}`;
+                botMessage.classList.add('bot-message');
+                chat.appendChild(botMessage);
+                addChatButtons(botMessage);
+            } catch (err) {
+                const errorMessage = document.createElement('p');
+                errorMessage.textContent = 'Bot: Error retrieving response.';
+                errorMessage.classList.add('bot-message');
+                chat.appendChild(errorMessage);
+                addChatButtons(errorMessage);
+            }
+
+            chatInput.value = ''; // Clear the chat input after sending
+        });
+
+        function updateEvaluationPreview() {
+            const question = document.getElementById('evaluation-question').value.trim();
+            const answer = document.getElementById('evaluation-answer').value.trim();
+            const solution = document.getElementById('evaluation-solution').value.trim();
+            const rubric = document.getElementById('evaluation-rubric').value.trim();
+            const includeFeedback = document.getElementById('include-feedback').checked;
+            const responseSize = document.getElementById('evaluation-response-size').value;
+
+            let preview = '';
+            if (question) preview += `Question: ${question} `;
+            if (answer) preview += `Answer: ${answer} `;
+            if (solution) preview += `Solution: ${solution} `;
+            if (rubric) preview += `Rubric: ${rubric} `;
+            if (includeFeedback) preview += `Include Feedback: Yes `;
+            if (responseSize) preview += `Response Size: ${responseSize}`;
+
+            previewContent.textContent = preview;
+        }
+
+        document.getElementById('evaluation-question').addEventListener('input', updateEvaluationPreview);
+        document.getElementById('evaluation-answer').addEventListener('input', updateEvaluationPreview);
+        document.getElementById('evaluation-solution').addEventListener('input', updateEvaluationPreview);
+        document.getElementById('evaluation-rubric').addEventListener('input', updateEvaluationPreview);
+        document.getElementById('include-feedback').addEventListener('change', updateEvaluationPreview);
+        document.getElementById('evaluation-response-size').addEventListener('change', updateEvaluationPreview);
+
+        const evaluateQuestionBtn = document.getElementById('evaluate-question-btn');
+        evaluateQuestionBtn.addEventListener('click', () => {
+            const question = document.getElementById('evaluation-question').value.trim();
+            const answer = document.getElementById('evaluation-answer').value.trim();
+            const solution = document.getElementById('evaluation-solution').value.trim();
+            const rubric = document.getElementById('evaluation-rubric').value.trim();
+            const includeFeedback = document.getElementById('include-feedback').checked;
+            const responseSize = document.getElementById('evaluation-response-size').value;
+
+            if (!question || !answer) {
+                alert('Please fill in both the question and the answer.');
+                return;
+            }
+
+            const message = `Question: ${question}\nAnswer: ${answer}\n` +
+                            (solution ? `Solution: ${solution}\n` : '') +
+                            (rubric ? `Rubric: ${rubric}\n` : '') +
+                            `Include Feedback: ${includeFeedback ? 'Yes' : 'No'}\n` +
+                            `Response Size: ${responseSize}`;
+
+            chatInput.value = message; // Fill the chat input with the preview content
+        });
+    </script>
+</body>
+</html>
