@@ -1,7 +1,7 @@
 📚 TutorConnect – Personalized Online Tutoring Platform and Course Delivery System
 
 
-Live Link: tutorconnect-frontend.onrender.com
+Live Link: https://tutorconnect-frontend.onrender.com/
 
 YT link: https://www.youtube.com/watch?v=Y4Bzqy_g1fY
 
