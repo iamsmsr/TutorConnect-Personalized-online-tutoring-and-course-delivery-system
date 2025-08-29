@@ -1,4 +1,4 @@
-📚 TutorConnect – Personalized Online Tutoring Platform
+📚 TutorConnect – Personalized Online Tutoring Platform and Course Delivery System
 
 TutorConnect is a CSE471 academic project: a personalized online tutoring & course delivery system with role-based access, real-time interaction, and RAG-powered AI support.
 
