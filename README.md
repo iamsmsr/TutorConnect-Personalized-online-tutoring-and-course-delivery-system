@@ -21,7 +21,7 @@ Smart Assignment & Evaluation → 🧠 Tutors create assignments directly from t
 
 Frontend: HTML, CSS, JS, Leaflet.js
 
-Backend: Spring Boot, Spring Security, JWT, WebSocket
+Backend: Spring Boot, Spring Security, JWT, WebSocket, GroqAPI
 
 Database: MongoDB Atlas
 
